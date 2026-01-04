@@ -1,10 +1,19 @@
+import { useState, useEffect } from "react";
 import { Heart, MapPin, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getRestaurantImages } from "../../utils/pixabayApi";
+import { fetchRestaurantImages } from "../../utils/pixabayApi";
 
 const UserSavedRestaurants = () => {
-  const restaurantImages = getRestaurantImages();
+  const [restaurantImages, setRestaurantImages] = useState<string[]>([]);
+  
+  useEffect(() => {
+    const loadImages = async () => {
+      const images = await fetchRestaurantImages();
+      setRestaurantImages(images);
+    };
+    loadImages();
+  }, []);
   
   const savedRestaurants = [
     {
@@ -13,7 +22,7 @@ const UserSavedRestaurants = () => {
       cuisine: "South Indian, Biryani",
       rating: 4.5,
       location: "T. Nagar, Chennai",
-      image: restaurantImages[3],
+      image: restaurantImages[3] || "https://cdn.pixabay.com/photo/2016/03/05/19/02/hamburger-1238246_1920.jpg",
       distance: "2.5 km"
     },
     {
@@ -22,7 +31,7 @@ const UserSavedRestaurants = () => {
       cuisine: "Vegetarian, South Indian",
       rating: 4.3,
       location: "Anna Nagar, Chennai",
-      image: restaurantImages[4],
+      image: restaurantImages[4] || "https://cdn.pixabay.com/photo/2017/06/06/22/46/mediterranean-cuisine-2378758_1920.jpg",
       distance: "3.2 km"
     },
     {
@@ -31,7 +40,7 @@ const UserSavedRestaurants = () => {
       cuisine: "Traditional South Indian",
       rating: 4.7,
       location: "Park Hyatt, Chennai",
-      image: restaurantImages[5],
+      image: restaurantImages[5] || "https://cdn.pixabay.com/photo/2017/01/26/02/06/platter-2009590_1920.jpg",
       distance: "5.1 km"
     }
   ];

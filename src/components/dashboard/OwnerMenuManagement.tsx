@@ -1,23 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, Camera } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { getFoodImages } from "../../utils/pixabayApi";
+import { fetchFoodImages } from "../../utils/pixabayApi";
 
 const OwnerMenuManagement = () => {
-  const foodImages = getFoodImages();
-  
+  const [foodImages, setFoodImages] = useState<string[]>([]);
   const [menuItems, setMenuItems] = useState([
-    { id: 1, name: "Idli with Sambar", price: 60, category: "Main Course", image: foodImages[0] },
-    { id: 2, name: "Masala Dosa", price: 80, category: "Main Course", image: foodImages[1] },
-    { id: 3, name: "Filter Coffee", price: 30, category: "Beverages", image: foodImages[2] },
-    { id: 4, name: "Chicken Biryani", price: 180, category: "Main Course", image: foodImages[3] },
-    { id: 5, name: "Vada Sambar", price: 45, category: "Snacks", image: foodImages[4] },
-    { id: 6, name: "Curd Rice", price: 70, category: "Main Course", image: foodImages[5] }
+    { id: 1, name: "Idli with Sambar", price: 60, category: "Main Course", image: "" },
+    { id: 2, name: "Masala Dosa", price: 80, category: "Main Course", image: "" },
+    { id: 3, name: "Filter Coffee", price: 30, category: "Beverages", image: "" },
+    { id: 4, name: "Chicken Biryani", price: 180, category: "Main Course", image: "" },
+    { id: 5, name: "Vada Sambar", price: 45, category: "Snacks", image: "" },
+    { id: 6, name: "Curd Rice", price: 70, category: "Main Course", image: "" }
   ]);
 
   const { toast } = useToast();
+
+  useEffect(() => {
+    const loadImages = async () => {
+      const images = await fetchFoodImages();
+      setFoodImages(images);
+      
+      // Update menu items with images
+      setMenuItems(prevItems => 
+        prevItems.map((item, index) => ({
+          ...item,
+          image: images[index] || images[0] || "https://cdn.pixabay.com/photo/2017/09/16/19/21/salad-2756467_1920.jpg"
+        }))
+      );
+    };
+    loadImages();
+  }, []);
 
   const handleMenuItemAdd = () => {
     const newItem = {
@@ -25,7 +40,7 @@ const OwnerMenuManagement = () => {
       name: "New Dish",
       price: 0,
       category: "Main Course",
-      image: foodImages[Math.floor(Math.random() * foodImages.length)]
+      image: foodImages[Math.floor(Math.random() * foodImages.length)] || "https://cdn.pixabay.com/photo/2017/09/16/19/21/salad-2756467_1920.jpg"
     };
     setMenuItems([...menuItems, newItem]);
   };

@@ -43,11 +43,11 @@ export const chennaiRestaurants: Restaurant[] = [
     rating: 4.5,
     reviews: 2847,
     priceForTwo: 300,
-    image: "https://images.unsplash.com/photo-1630383249896-424e482df921?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    image: "https://cdn.pixabay.com/photo/2017/09/16/19/21/salad-2756467_1920.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1630383249896-424e482df921?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1596797038530-2c107229654b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      "https://cdn.pixabay.com/photo/2017/09/16/19/21/salad-2756467_1920.jpg",
+      "https://cdn.pixabay.com/photo/2018/07/18/19/12/pasta-3547078_1920.jpg",
+      "https://cdn.pixabay.com/photo/2017/05/01/05/18/pastry-2274750_1920.jpg"
     ],
     menu: [
       {
@@ -56,7 +56,7 @@ export const chennaiRestaurants: Restaurant[] = [
         price: 60,
         category: "Main Course",
         description: "Soft steamed rice cakes served with tangy sambar and coconut chutney",
-        image: "https://images.unsplash.com/photo-1630383249896-424e482df921?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        image: "https://cdn.pixabay.com/photo/2017/09/16/19/21/salad-2756467_1920.jpg",
         isVeg: true
       },
       {
@@ -65,7 +65,7 @@ export const chennaiRestaurants: Restaurant[] = [
         price: 80,
         category: "Main Course", 
         description: "Crispy rice crepe filled with spiced potato filling",
-        image: "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        image: "https://cdn.pixabay.com/photo/2018/07/18/19/12/pasta-3547078_1920.jpg",
         isVeg: true
       },
       {
@@ -74,7 +74,7 @@ export const chennaiRestaurants: Restaurant[] = [
         price: 30,
         category: "Beverages",
         description: "Traditional South Indian filter coffee",
-        image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        image: "https://cdn.pixabay.com/photo/2017/05/01/05/18/pastry-2274750_1920.jpg",
         isVeg: true
       },
       {
@@ -83,7 +83,7 @@ export const chennaiRestaurants: Restaurant[] = [
         price: 50,
         category: "Main Course",
         description: "Semolina cooked with vegetables and spices",
-        image: "https://images.unsplash.com/photo-1596797038530-2c107229654b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        image: "https://cdn.pixabay.com/photo/2016/12/26/17/28/spaghetti-1932466_1920.jpg",
         isVeg: true
       }
     ],
@@ -102,10 +102,10 @@ export const chennaiRestaurants: Restaurant[] = [
     rating: 4.3,
     reviews: 1923,
     priceForTwo: 450,
-    image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    image: "https://cdn.pixabay.com/photo/2017/06/06/22/46/mediterranean-cuisine-2378758_1920.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      "https://cdn.pixabay.com/photo/2017/06/06/22/46/mediterranean-cuisine-2378758_1920.jpg",
+      "https://cdn.pixabay.com/photo/2016/11/18/14/39/beans-1834984_1920.jpg"
     ],
     menu: [
       {
@@ -114,7 +114,7 @@ export const chennaiRestaurants: Restaurant[] = [
         price: 220,
         category: "Thali",
         description: "Complete meal with rice, sambar, rasam, vegetables, and dessert",
-        image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        image: "https://cdn.pixabay.com/photo/2017/06/06/22/46/mediterranean-cuisine-2378758_1920.jpg",
         isVeg: true
       },
       {
@@ -123,7 +123,7 @@ export const chennaiRestaurants: Restaurant[] = [
         price: 180,
         category: "Main Course",
         description: "Cottage cheese in rich tomato and butter gravy",
-        image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        image: "https://cdn.pixabay.com/photo/2016/11/18/14/39/beans-1834984_1920.jpg",
         isVeg: true
       }
     ],
@@ -142,9 +142,9 @@ export const chennaiRestaurants: Restaurant[] = [
     rating: 4.6,
     reviews: 3421,
     priceForTwo: 1200,
-    image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    image: "https://cdn.pixabay.com/photo/2017/01/26/02/06/platter-2009590_1920.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      "https://cdn.pixabay.com/photo/2017/01/26/02/06/platter-2009590_1920.jpg"
     ],
     menu: [
       {
@@ -153,7 +153,7 @@ export const chennaiRestaurants: Restaurant[] = [
         price: 280,
         category: "Main Course",
         description: "Creamy black lentils cooked overnight with butter and cream",
-        image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        image: "https://cdn.pixabay.com/photo/2017/01/26/02/06/platter-2009590_1920.jpg",
         isVeg: true
       },
       {
@@ -162,7 +162,7 @@ export const chennaiRestaurants: Restaurant[] = [
         price: 380,
         category: "Main Course",
         description: "Tender chicken in rich tomato and butter gravy",
-        image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        image: "https://cdn.pixabay.com/photo/2017/08/03/13/30/people-2576336_1920.jpg",
         isVeg: false
       }
     ],
@@ -181,9 +181,9 @@ export const chennaiRestaurants: Restaurant[] = [
     rating: 4.4,
     reviews: 2156,
     priceForTwo: 600,
-    image: "https://images.unsplash.com/photo-1563379091339-03246967d4d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    image: "https://cdn.pixabay.com/photo/2016/03/05/19/02/hamburger-1238246_1920.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1563379091339-03246967d4d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      "https://cdn.pixabay.com/photo/2016/03/05/19/02/hamburger-1238246_1920.jpg"
     ],
     menu: [
       {
@@ -192,7 +192,7 @@ export const chennaiRestaurants: Restaurant[] = [
         price: 320,
         category: "Biryani",
         description: "Aromatic basmati rice cooked with tender chicken and spices",
-        image: "https://images.unsplash.com/photo-1563379091339-03246967d4d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        image: "https://cdn.pixabay.com/photo/2016/03/05/19/02/hamburger-1238246_1920.jpg",
         isVeg: false,
         isSpicy: true
       },
@@ -202,7 +202,7 @@ export const chennaiRestaurants: Restaurant[] = [
         price: 420,
         category: "Biryani",
         description: "Traditional mutton biryani with fragrant spices",
-        image: "https://images.unsplash.com/photo-1563379091339-03246967d4d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        image: "https://cdn.pixabay.com/photo/2017/12/09/08/18/pizza-3007395_1920.jpg",
         isVeg: false,
         isSpicy: true
       }
@@ -222,9 +222,9 @@ export const chennaiRestaurants: Restaurant[] = [
     rating: 4.7,
     reviews: 4821,
     priceForTwo: 1500,
-    image: "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    image: "https://cdn.pixabay.com/photo/2014/10/19/20/59/hamburger-494706_1920.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      "https://cdn.pixabay.com/photo/2014/10/19/20/59/hamburger-494706_1920.jpg"
     ],
     menu: [
       {
@@ -233,7 +233,7 @@ export const chennaiRestaurants: Restaurant[] = [
         price: 899,
         category: "Buffet",
         description: "Unlimited grilled items, live counters, and desserts",
-        image: "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        image: "https://cdn.pixabay.com/photo/2014/10/19/20/59/hamburger-494706_1920.jpg",
         isVeg: false
       }
     ],
@@ -252,10 +252,10 @@ export const chennaiRestaurants: Restaurant[] = [
     rating: 4.4,
     reviews: 3560,
     priceForTwo: 350,
-    image: "https://images.unsplash.com/photo-1630383249896-424e482df921?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    image: "https://cdn.pixabay.com/photo/2017/05/04/16/37/meeting-2280656_1920.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1630383249896-424e482df921?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      "https://cdn.pixabay.com/photo/2017/05/04/16/37/meeting-2280656_1920.jpg",
+      "https://cdn.pixabay.com/photo/2015/03/26/09/47/sky-690293_1920.jpg"
     ],
     menu: [
       {
@@ -264,7 +264,7 @@ export const chennaiRestaurants: Restaurant[] = [
         price: 120,
         category: "Combo",
         description: "Assortment of idli, vada, dosa with chutneys",
-        image: "https://images.unsplash.com/photo-1630383249896-424e482df921?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        image: "https://cdn.pixabay.com/photo/2017/05/04/16/37/meeting-2280656_1920.jpg",
         isVeg: true
       }
     ],
@@ -283,9 +283,9 @@ export const chennaiRestaurants: Restaurant[] = [
     rating: 4.3,
     reviews: 1820,
     priceForTwo: 900,
-    image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    image: "https://cdn.pixabay.com/photo/2017/08/06/12/06/people-2591874_1920.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      "https://cdn.pixabay.com/photo/2017/08/06/12/06/people-2591874_1920.jpg"
     ],
     menu: [
       {
@@ -294,7 +294,7 @@ export const chennaiRestaurants: Restaurant[] = [
         price: 350,
         category: "Thali",
         description: "Complete North Indian meal with dal, paneer, roti, and dessert",
-        image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        image: "https://cdn.pixabay.com/photo/2017/08/06/12/06/people-2591874_1920.jpg",
         isVeg: true
       }
     ],
@@ -313,9 +313,9 @@ export const chennaiRestaurants: Restaurant[] = [
     rating: 4.5,
     reviews: 2340,
     priceForTwo: 700,
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    image: "https://cdn.pixabay.com/photo/2016/11/29/05/45/astronomy-1867616_1920.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      "https://cdn.pixabay.com/photo/2016/11/29/05/45/astronomy-1867616_1920.jpg"
     ],
     menu: [
       {
@@ -324,7 +324,7 @@ export const chennaiRestaurants: Restaurant[] = [
         price: 220,
         category: "Desserts",
         description: "Hot chocolate brownie served with vanilla ice cream",
-        image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        image: "https://cdn.pixabay.com/photo/2016/11/29/05/45/astronomy-1867616_1920.jpg",
         isVeg: true
       }
     ],
@@ -343,9 +343,9 @@ export const chennaiRestaurants: Restaurant[] = [
     rating: 4.1,
     reviews: 890,
     priceForTwo: 400,
-    image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    image: "https://cdn.pixabay.com/photo/2014/09/17/20/26/restaurant-449952_1920.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      "https://cdn.pixabay.com/photo/2014/09/17/20/26/restaurant-449952_1920.jpg"
     ],
     menu: [
       {
@@ -354,7 +354,7 @@ export const chennaiRestaurants: Restaurant[] = [
         price: 150,
         category: "Beverages",
         description: "Rich espresso with steamed milk and foam",
-        image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        image: "https://cdn.pixabay.com/photo/2014/09/17/20/26/restaurant-449952_1920.jpg",
         isVeg: true
       }
     ],

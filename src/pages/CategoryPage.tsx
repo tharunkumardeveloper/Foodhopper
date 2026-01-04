@@ -6,37 +6,76 @@ import Footer from "../components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { chennaiRestaurants, Restaurant } from "../data/chennaiRestaurants";
+import { fetchCategoryImages } from "../utils/pixabayApi";
 
 const CategoryPage = () => {
   const { categoryName } = useParams();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [categoryImage, setCategoryImage] = useState<string>("");
 
   useEffect(() => {
     // Filter restaurants by category/dine type
-    const filtered = chennaiRestaurants.filter(restaurant => 
-      restaurant.dineTypes.some(type => 
-        type.toLowerCase().includes(categoryName?.toLowerCase() || '')
+    const filtered = chennaiRestaurants.filter(restaurant => {
+      const categoryLower = categoryName?.toLowerCase() || '';
+      
+      // Map URL categories to restaurant data
+      const categoryMappings: { [key: string]: string[] } = {
+        'fine-dining': ['Fine Dining', 'fine dining'],
+        'fast-food': ['Fast Food', 'Quick Bites', 'quick bites'],
+        'cafes': ['Cafes and Bakeries', 'Café', 'cafe'],
+        'buffet': ['Buffet Restaurants', 'buffet'],
+        'family-friendly': ['Family Restaurants', 'Family Dining', 'family'],
+        'romantic': ['Fine Dining', 'romantic'],
+        'street-food': ['street food', 'Street Food'],
+        'vegan': ['Vegetarian', 'vegan'],
+        'desserts': ['Desserts', 'dessert'],
+        'south-indian': ['South Indian'],
+        'north-indian': ['North Indian', 'Punjabi'],
+        'biryani': ['Biryani']
+      };
+
+      const searchTerms = categoryMappings[categoryLower] || [categoryLower];
+      
+      return restaurant.dineTypes.some(type => 
+        searchTerms.some(term => type.toLowerCase().includes(term.toLowerCase()))
       ) ||
       restaurant.cuisine.some(cuisine => 
-        cuisine.toLowerCase().includes(categoryName?.toLowerCase() || '')
-      )
-    );
+        searchTerms.some(term => cuisine.toLowerCase().includes(term.toLowerCase()))
+      ) ||
+      restaurant.features.some(feature => 
+        searchTerms.some(term => feature.toLowerCase().includes(term.toLowerCase()))
+      );
+    });
+    
     setRestaurants(filtered);
+    
+    // Load category image
+    const loadCategoryImage = async () => {
+      if (categoryName) {
+        const images = await fetchCategoryImages(categoryName);
+        setCategoryImage(images[0] || "");
+      }
+    };
+    loadCategoryImage();
   }, [categoryName]);
 
   const getCategoryTitle = (category: string) => {
     const categoryMap: { [key: string]: string } = {
       'fine-dining': 'Fine Dining',
-      'family-restaurants': 'Family Restaurants',
+      'fast-food': 'Fast Food',
+      'cafes': 'Cafes & Coffee Shops',
       'buffet': 'Buffet Restaurants',
+      'family-friendly': 'Family-Friendly Restaurants',
+      'romantic': 'Romantic Dining',
+      'street-food': 'Street Food',
+      'vegan': 'Vegetarian & Vegan',
+      'desserts': 'Desserts & Sweets',
       'quick-bites': 'Quick Bites',
-      'veg-only': 'Vegetarian Only',
-      'non-veg': 'Non-Vegetarian Speciality',
-      'south-indian': 'South Indian',
-      'north-indian': 'North Indian',
+      'south-indian': 'South Indian Cuisine',
+      'north-indian': 'North Indian Cuisine',
       'biryani': 'Biryani Specialists'
     };
-    return categoryMap[category || ''] || category?.replace('-', ' ').toUpperCase() || 'Restaurants';
+    return categoryMap[category || ''] || category?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Restaurants';
   };
 
   const openInGoogleMaps = (restaurant: Restaurant) => {
@@ -50,14 +89,35 @@ const CategoryPage = () => {
       
       <div className="pt-20 pb-8">
         <div className="container mx-auto px-4">
-          {/* Header */}
+          {/* Header with Category Image */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {getCategoryTitle(categoryName)}
-            </h1>
-            <p className="text-gray-600">
-              Explore the best {getCategoryTitle(categoryName).toLowerCase()} restaurants in Chennai
-            </p>
+            {categoryImage && (
+              <div 
+                className="h-64 bg-cover bg-center rounded-lg mb-6 relative"
+                style={{ backgroundImage: `url(${categoryImage})` }}
+              >
+                <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
+                  <div className="text-center text-white">
+                    <h1 className="text-4xl font-bold mb-2">
+                      {getCategoryTitle(categoryName)}
+                    </h1>
+                    <p className="text-lg opacity-90">
+                      Explore the best {getCategoryTitle(categoryName).toLowerCase()} in Chennai
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            {!categoryImage && (
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  {getCategoryTitle(categoryName)}
+                </h1>
+                <p className="text-gray-600">
+                  Explore the best {getCategoryTitle(categoryName).toLowerCase()} in Chennai
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Restaurant Grid */}

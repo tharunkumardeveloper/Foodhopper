@@ -1,13 +1,23 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Calendar, Clock, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { fetchRestaurantImages } from "../../utils/pixabayApi";
 
 const UserBookings = () => {
   const { toast } = useToast();
+  const [restaurantImages, setRestaurantImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadImages = async () => {
+      const images = await fetchRestaurantImages();
+      setRestaurantImages(images);
+    };
+    loadImages();
+  }, []);
 
   const bookings = [
     {
@@ -17,7 +27,7 @@ const UserBookings = () => {
       time: "7:00 PM",
       guests: 4,
       status: "confirmed",
-      image: "https://images.unsplash.com/photo-1630383249896-424e482df921?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+      image: restaurantImages[0] || "https://cdn.pixabay.com/photo/2017/09/16/19/21/salad-2756467_1920.jpg"
     },
     {
       id: "book-002", 
@@ -26,7 +36,7 @@ const UserBookings = () => {
       time: "8:30 PM",
       guests: 2,
       status: "completed",
-      image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+      image: restaurantImages[1] || "https://cdn.pixabay.com/photo/2017/06/06/22/46/mediterranean-cuisine-2378758_1920.jpg"
     }
   ];
 

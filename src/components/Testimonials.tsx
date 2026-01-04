@@ -1,13 +1,13 @@
 
 import { useState, useEffect } from "react";
-import { searchPixabayImages } from "../utils/pixabayApi";
+import { fetchUserAvatars } from "../utils/pixabayApi";
 
 const Testimonials = () => {
   const [userAvatars, setUserAvatars] = useState<string[]>([]);
 
   useEffect(() => {
     const loadUserAvatars = async () => {
-      const avatars = await searchPixabayImages('professional portrait headshot business person', 3);
+      const avatars = await fetchUserAvatars();
       setUserAvatars(avatars);
     };
     loadUserAvatars();

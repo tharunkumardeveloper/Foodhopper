@@ -26,7 +26,20 @@ const Search = () => {
       setLocation("Chennai");
     }
     if (diningType) {
-      setDiningTypeFilter(diningType.replace('-', ' '));
+      // Map URL dining types to filter values
+      const diningTypeMap: { [key: string]: string } = {
+        'fine-dining': 'Fine Dining',
+        'fast-food': 'Quick Bites',
+        'cafe': 'Cafes and Bakeries',
+        'family-friendly': 'Family Dining',
+        'buffet': 'Buffet',
+        'romantic': 'Fine Dining',
+        'street-food': 'Quick Bites',
+        'rooftop': 'Fine Dining'
+      };
+      
+      const mappedType = diningTypeMap[diningType] || diningType.replace('-', ' ');
+      setDiningTypeFilter(mappedType);
     }
   }, [isNearby, diningType]);
 

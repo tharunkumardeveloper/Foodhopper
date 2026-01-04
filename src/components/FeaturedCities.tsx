@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { searchPixabayImages } from "../utils/pixabayApi";
+import { fetchCityImages } from "../utils/pixabayApi";
 
 const FeaturedCities = () => {
   const [cityImages, setCityImages] = useState<string[]>([]);
 
   useEffect(() => {
     const loadCityImages = async () => {
-      const images = await searchPixabayImages('indian city skyline urban modern architecture', 6);
+      const images = await fetchCityImages();
       setCityImages(images);
     };
     loadCityImages();

@@ -1,10 +1,19 @@
+import { useState, useEffect } from "react";
 import { Star, Edit } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getFoodImages } from "../../utils/pixabayApi";
+import { fetchFoodImages } from "../../utils/pixabayApi";
 
 const UserReviews = () => {
-  const foodImages = getFoodImages();
+  const [foodImages, setFoodImages] = useState<string[]>([]);
+  
+  useEffect(() => {
+    const loadImages = async () => {
+      const images = await fetchFoodImages();
+      setFoodImages(images);
+    };
+    loadImages();
+  }, []);
   
   const reviews = [
     {
@@ -13,7 +22,7 @@ const UserReviews = () => {
       rating: 5,
       comment: "Amazing biryani! The flavors were incredible and service was excellent.", 
       date: "2024-06-15",
-      image: foodImages[0]
+      image: foodImages[0] || "https://cdn.pixabay.com/photo/2016/03/05/19/02/hamburger-1238246_1920.jpg"
     },
     {
       id: "rev-002",
@@ -21,7 +30,7 @@ const UserReviews = () => {
       rating: 4,
       comment: "Great vegetarian options and authentic South Indian taste. Highly recommended!",
       date: "2024-06-10",
-      image: foodImages[1]
+      image: foodImages[1] || "https://cdn.pixabay.com/photo/2017/09/16/19/21/salad-2756467_1920.jpg"
     },
     {
       id: "rev-003",
@@ -29,7 +38,7 @@ const UserReviews = () => {
       rating: 5,
       comment: "Exceptional fine dining experience with traditional recipes beautifully presented.",
       date: "2024-06-05", 
-      image: foodImages[2]
+      image: foodImages[2] || "https://cdn.pixabay.com/photo/2018/07/18/19/12/pasta-3547078_1920.jpg"
     }
   ];
 

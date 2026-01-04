@@ -1,27 +1,32 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { searchPixabayImages } from "../utils/pixabayApi";
+import { fetchCategoryImages } from "../utils/pixabayApi";
 
 const Categories = () => {
   const [categoryImages, setCategoryImages] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     const loadCategoryImages = async () => {
-      const fineDiningImages = await searchPixabayImages('fine dining elegant restaurant luxury food', 1);
-      const fastFoodImages = await searchPixabayImages('hamburger fast food burger fries', 1);
-      const cafeImages = await searchPixabayImages('coffee cafe latte cappuccino breakfast', 1);
-      const veganImages = await searchPixabayImages('fresh salad healthy vegan vegetables', 1);
-      const dessertImages = await searchPixabayImages('delicious cake dessert pastry sweet', 1);
-      const streetFoodImages = await searchPixabayImages('street food tacos authentic local cuisine', 1);
-
-      setCategoryImages({
-        'Fine Dining': fineDiningImages[0],
-        'Fast Food': fastFoodImages[0],
-        'Cafes': cafeImages[0],
-        'Vegan': veganImages[0],
-        'Desserts': dessertImages[0],
-        'Street Food': streetFoodImages[0]
+      const categories = ['fine-dining', 'fast-food', 'cafes', 'vegan', 'desserts', 'street-food'];
+      const imagePromises = categories.map(async (category) => {
+        const images = await fetchCategoryImages(category);
+        return { category, image: images[0] };
       });
+      
+      const results = await Promise.all(imagePromises);
+      const imageMap: { [key: string]: string } = {};
+      
+      results.forEach(({ category, image }) => {
+        const displayName = category === 'fine-dining' ? 'Fine Dining' :
+                           category === 'fast-food' ? 'Fast Food' :
+                           category === 'cafes' ? 'Cafes' :
+                           category === 'vegan' ? 'Vegan' :
+                           category === 'desserts' ? 'Desserts' :
+                           category === 'street-food' ? 'Street Food' : category;
+        imageMap[displayName] = image;
+      });
+      
+      setCategoryImages(imageMap);
     };
     loadCategoryImages();
   }, []);
