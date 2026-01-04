@@ -1,5 +1,5 @@
-
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { searchPixabayImages } from "../utils/pixabayApi";
 
 const FeaturedCities = () => {
@@ -56,8 +56,9 @@ const FeaturedCities = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cities.map((city, index) => (
-            <div 
+            <Link 
               key={city.name}
+              to={`/city/${city.name}`}
               className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               {cityImages[index] && (
@@ -65,6 +66,9 @@ const FeaturedCities = () => {
                   className="h-64 bg-cover bg-center"
                   style={{ backgroundImage: `url(${cityImages[index]})` }}
                 />
+              )}
+              {!cityImages[index] && (
+                <div className="h-64 bg-gradient-to-br from-orange-400 to-red-500" />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4 text-white">
@@ -77,7 +81,7 @@ const FeaturedCities = () => {
                   Popular
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

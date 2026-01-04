@@ -1,9 +1,10 @@
-
 import { useState } from "react";
 import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -141,17 +142,28 @@ const Contact = () => {
                 </div>
               </div>
 
-              {/* Map Placeholder */}
-              <div className="bg-white rounded-lg shadow-lg p-8">
-                <h3 className="text-xl font-bold text-gray-800 mb-4">Find us on the map</h3>
-                <div className="bg-gray-200 rounded-lg h-64 flex items-center justify-center">
-                  <p className="text-gray-500">Interactive Map Coming Soon</p>
+              {/* Map */}
+              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <h3 className="text-xl font-bold text-gray-800 p-6 pb-4">Find us on the map</h3>
+                <div className="h-64">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3886.4461244856455!2d80.23389081432993!3d13.067439590799147!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5266002c3be5af%3A0x53eb03ad6e37cc7b!2sChennai%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1640000000000!5m2!1sen!2sin"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="FoodHopper Location"
+                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };

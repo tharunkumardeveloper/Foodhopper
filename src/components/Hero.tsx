@@ -1,5 +1,5 @@
-
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ const Hero = () => {
   const [location, setLocation] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [heroImages, setHeroImages] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadImages = async () => {
@@ -28,6 +29,14 @@ const Hero = () => {
       return () => clearInterval(interval);
     }
   }, [heroImages.length]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (searchQuery) params.set('q', searchQuery);
+    if (location) params.set('location', location);
+    navigate(`/search?${params.toString()}`);
+  };
 
   return (
     <div className="relative h-screen flex items-center justify-center">
@@ -53,7 +62,7 @@ const Hero = () => {
         </p>
         
         {/* Search Bar */}
-        <div className="bg-white rounded-lg p-4 shadow-2xl max-w-2xl mx-auto animate-scale-in">
+        <form onSubmit={handleSearch} className="bg-white rounded-lg p-4 shadow-2xl max-w-2xl mx-auto animate-scale-in">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -74,13 +83,14 @@ const Hero = () => {
               />
             </div>
             <Button 
+              type="submit"
               size="lg" 
               className="h-12 px-8 bg-orange-500 hover:bg-orange-600 text-white transition-all duration-300 hover:scale-105"
             >
               Search Now
             </Button>
           </div>
-        </div>
+        </form>
         
         {/* Image indicators */}
         {heroImages.length > 0 && (
@@ -96,6 +106,22 @@ const Hero = () => {
             ))}
           </div>
         )}
+        
+        {/* Quick Stats */}
+        <div className="mt-12 grid grid-cols-3 gap-8 max-w-lg mx-auto">
+          <div className="text-center">
+            <div className="text-3xl font-bold text-orange-400">5000+</div>
+            <div className="text-sm text-gray-300">Restaurants</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-orange-400">50K+</div>
+            <div className="text-sm text-gray-300">Happy Diners</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-orange-400">25+</div>
+            <div className="text-sm text-gray-300">Cities</div>
+          </div>
+        </div>
       </div>
     </div>
   );

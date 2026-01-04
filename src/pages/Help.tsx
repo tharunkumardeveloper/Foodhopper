@@ -1,7 +1,8 @@
-
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Navigation from "../components/Navigation";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import Footer from "../components/Footer";
+import { ChevronDown, ChevronUp, MessageCircle, Phone, Mail, Book } from "lucide-react";
 
 const Help = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -51,6 +52,7 @@ const Help = () => {
       
       <div className="pt-20 pb-16">
         <div className="container mx-auto px-4 max-w-4xl">
+          {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
               Help Center
@@ -58,6 +60,36 @@ const Help = () => {
             <p className="text-lg text-gray-600">
               Find answers to commonly asked questions
             </p>
+          </div>
+
+          {/* Quick Help Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="bg-white rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Book className="h-6 w-6 text-orange-500" />
+              </div>
+              <h3 className="font-semibold text-gray-800 mb-2">Getting Started</h3>
+              <p className="text-gray-600 text-sm">Learn the basics of booking tables</p>
+            </div>
+            <div className="bg-white rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageCircle className="h-6 w-6 text-orange-500" />
+              </div>
+              <h3 className="font-semibold text-gray-800 mb-2">Live Chat</h3>
+              <p className="text-gray-600 text-sm">Chat with our support team</p>
+            </div>
+            <Link to="/contact" className="bg-white rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Mail className="h-6 w-6 text-orange-500" />
+              </div>
+              <h3 className="font-semibold text-gray-800 mb-2">Email Support</h3>
+              <p className="text-gray-600 text-sm">Send us a detailed message</p>
+            </Link>
+          </div>
+
+          {/* FAQs */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h2>
           </div>
 
           <div className="bg-white rounded-lg shadow-lg">
@@ -72,7 +104,7 @@ const Help = () => {
                       {faq.question}
                     </h3>
                     {openFaq === index ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                      <ChevronUp className="h-5 w-5 text-orange-500 flex-shrink-0" />
                     ) : (
                       <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
                     )}
@@ -91,30 +123,33 @@ const Help = () => {
           </div>
 
           {/* Additional Help Section */}
-          <div className="mt-12 bg-orange-50 rounded-lg p-8 text-center">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          <div className="mt-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg p-8 text-center text-white">
+            <h2 className="text-2xl font-bold mb-4">
               Still need help?
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="mb-6 opacity-90">
               Can't find the answer you're looking for? Our support team is here to help.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a 
-                href="/contact"
-                className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition-colors"
+              <Link 
+                to="/contact"
+                className="bg-white text-orange-500 px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
               >
                 Contact Support
-              </a>
+              </Link>
               <a 
-                href="mailto:support@foodhopper.com"
-                className="border border-orange-500 text-orange-500 px-6 py-3 rounded-lg hover:bg-orange-500 hover:text-white transition-colors"
+                href="tel:+919876543210"
+                className="border-2 border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-orange-500 transition-colors font-semibold flex items-center justify-center"
               >
-                Email Us
+                <Phone className="h-4 w-4 mr-2" />
+                Call Us
               </a>
             </div>
           </div>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };
