@@ -241,6 +241,127 @@ export const chennaiRestaurants: Restaurant[] = [
     phone: "+91 98765 43214",
     description: "Premium barbecue buffet restaurant with live grilling at your table.",
     features: ["Buffet", "Live Grilling", "Premium Dining", "Family Friendly"]
+  },
+  {
+    id: "saravana-bhavan",
+    name: "Saravana Bhavan",
+    address: "Cathedral Road, Chennai - 600086",
+    location: { lat: 13.0624, lng: 80.2574 },
+    cuisine: ["South Indian", "Vegetarian"],
+    dineTypes: ["Family Dining", "Quick Bites", "Traditional Indian Thali"],
+    rating: 4.4,
+    reviews: 3560,
+    priceForTwo: 350,
+    image: "https://images.unsplash.com/photo-1630383249896-424e482df921?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1630383249896-424e482df921?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    ],
+    menu: [
+      {
+        id: "mini-tiffin",
+        name: "Mini Tiffin",
+        price: 120,
+        category: "Combo",
+        description: "Assortment of idli, vada, dosa with chutneys",
+        image: "https://images.unsplash.com/photo-1630383249896-424e482df921?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        isVeg: true
+      }
+    ],
+    workingHours: "7:00 AM - 10:30 PM",
+    phone: "+91 98765 43215",
+    description: "World-famous vegetarian restaurant chain serving authentic South Indian cuisine since 1981.",
+    features: ["Vegetarian", "Chain Restaurant", "Authentic Recipes", "Family Friendly"]
+  },
+  {
+    id: "pind-balluchi",
+    name: "Pind Balluchi",
+    address: "Velachery, Chennai - 600042",
+    location: { lat: 12.9794, lng: 80.2185 },
+    cuisine: ["North Indian", "Punjabi", "Mughlai"],
+    dineTypes: ["Family Restaurants", "Fine Dining"],
+    rating: 4.3,
+    reviews: 1820,
+    priceForTwo: 900,
+    image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    ],
+    menu: [
+      {
+        id: "punjabi-thali",
+        name: "Punjabi Thali",
+        price: 350,
+        category: "Thali",
+        description: "Complete North Indian meal with dal, paneer, roti, and dessert",
+        image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        isVeg: true
+      }
+    ],
+    workingHours: "12:00 PM - 11:00 PM",
+    phone: "+91 98765 43216",
+    description: "Authentic Punjabi dhaba-style restaurant with rustic ambiance and hearty food.",
+    features: ["Dhaba Style", "North Indian", "Family Friendly", "Live Tandoor"]
+  },
+  {
+    id: "cream-centre",
+    name: "Cream Centre",
+    address: "Anna Nagar, Chennai - 600040",
+    location: { lat: 13.0850, lng: 80.2101 },
+    cuisine: ["Chinese", "Continental", "Desserts"],
+    dineTypes: ["Cafes and Bakeries", "Family Restaurants"],
+    rating: 4.5,
+    reviews: 2340,
+    priceForTwo: 700,
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    ],
+    menu: [
+      {
+        id: "brownie-sundae",
+        name: "Sizzling Brownie with Ice Cream",
+        price: 220,
+        category: "Desserts",
+        description: "Hot chocolate brownie served with vanilla ice cream",
+        image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        isVeg: true
+      }
+    ],
+    workingHours: "11:00 AM - 11:00 PM",
+    phone: "+91 98765 43217",
+    description: "Popular family restaurant known for its sizzlers, desserts, and vibrant atmosphere.",
+    features: ["Sizzlers", "Desserts", "Family Friendly", "Vegetarian Options"]
+  },
+  {
+    id: "cafe-coffee-day",
+    name: "Café Coffee Day",
+    address: "Nungambakkam, Chennai - 600034",
+    location: { lat: 13.0569, lng: 80.2425 },
+    cuisine: ["Café", "Snacks", "Beverages"],
+    dineTypes: ["Cafes and Bakeries", "Quick Bites"],
+    rating: 4.1,
+    reviews: 890,
+    priceForTwo: 400,
+    image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    ],
+    menu: [
+      {
+        id: "cappuccino",
+        name: "Classic Cappuccino",
+        price: 150,
+        category: "Beverages",
+        description: "Rich espresso with steamed milk and foam",
+        image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+        isVeg: true
+      }
+    ],
+    workingHours: "8:00 AM - 11:00 PM",
+    phone: "+91 98765 43218",
+    description: "India's favorite coffee chain offering great coffee and cozy ambiance.",
+    features: ["Coffee", "WiFi", "Work Friendly", "Quick Service"]
   }
 ];
 

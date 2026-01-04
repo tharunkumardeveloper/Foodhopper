@@ -1,105 +1,103 @@
-
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search as SearchIcon, MapPin, Star, Clock, Filter } from "lucide-react";
-import { getRestaurantImages } from "../utils/pixabayApi";
+import { Search as SearchIcon, MapPin, Star, Clock, Filter, X } from "lucide-react";
+import { chennaiRestaurants, Restaurant } from "../data/chennaiRestaurants";
 
 const Search = () => {
   const [searchParams] = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [location, setLocation] = useState("");
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || "");
+  const [location, setLocation] = useState(searchParams.get('location') || "");
   const [showFilters, setShowFilters] = useState(false);
+  const [filteredRestaurants, setFilteredRestaurants] = useState<Restaurant[]>(chennaiRestaurants);
+  const [cuisineFilter, setCuisineFilter] = useState("");
+  const [priceFilter, setPriceFilter] = useState("");
+  const [ratingFilter, setRatingFilter] = useState("");
+  const [diningTypeFilter, setDiningTypeFilter] = useState("");
   
   const isNearby = searchParams.get('nearby') === 'true';
   const diningType = searchParams.get('type') || '';
-  const restaurantImages = getRestaurantImages();
-
-  const mockRestaurants = [
-    {
-      id: 1,
-      name: "The Spice Route",
-      cuisine: "Indian, Asian",
-      rating: 4.8,
-      reviews: 1250,
-      price: "₹1,200 for two",
-      image: restaurantImages[0],
-      location: "Bandra West",
-      distance: "2.3 km",
-      time: "30-40 mins"
-    },
-    {
-      id: 2,
-      name: "Artisan Bistro",
-      cuisine: "Continental, Italian",
-      rating: 4.6,
-      reviews: 890,
-      price: "₹1,800 for two",
-      image: restaurantImages[1],
-      location: "Connaught Place",
-      distance: "1.8 km",
-      time: "25-35 mins"
-    },
-    {
-      id: 3,
-      name: "Coastal Kitchen",
-      cuisine: "Seafood, South Indian",
-      rating: 4.7,
-      reviews: 1560,
-      price: "₹900 for two",
-      image: restaurantImages[2],
-      location: "Koramangala",
-      distance: "3.1 km",
-      time: "20-30 mins"
-    },
-    {
-      id: 4,
-      name: "Mumbai Delights",
-      cuisine: "Street Food, Indian",
-      rating: 4.4,
-      reviews: 780,
-      price: "₹600 for two",
-      image: restaurantImages[3],
-      location: "Linking Road",
-      distance: "1.5 km",
-      time: "15-25 mins"
-    },
-    {
-      id: 5,
-      name: "Garden Café",
-      cuisine: "Continental, Café",
-      rating: 4.5,
-      reviews: 650,
-      price: "₹800 for two",
-      image: restaurantImages[4],
-      location: "Banjara Hills",
-      distance: "4.2 km",
-      time: "35-45 mins"
-    },
-    {
-      id: 6,
-      name: "Royal Biryani House",
-      cuisine: "Mughlai, North Indian",
-      rating: 4.9,
-      reviews: 2100,
-      price: "₹1,000 for two",
-      image: restaurantImages[5],
-      location: "Old City",
-      distance: "3.8 km",
-      time: "25-35 mins"
-    }
-  ];
 
   useEffect(() => {
     if (isNearby) {
-      setLocation("Near your location");
+      setLocation("Chennai");
     }
     if (diningType) {
-      setSearchQuery(diningType.replace('-', ' '));
+      setDiningTypeFilter(diningType.replace('-', ' '));
     }
   }, [isNearby, diningType]);
+
+  useEffect(() => {
+    let filtered = chennaiRestaurants;
+
+    // Search query filter
+    if (searchQuery) {
+      filtered = filtered.filter(r =>
+        r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        r.cuisine.some(c => c.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        r.dineTypes.some(d => d.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+
+    // Cuisine filter
+    if (cuisineFilter) {
+      filtered = filtered.filter(r => r.cuisine.includes(cuisineFilter));
+    }
+
+    // Price filter
+    if (priceFilter) {
+      switch (priceFilter) {
+        case "under-500":
+          filtered = filtered.filter(r => r.priceForTwo < 500);
+          break;
+        case "500-1000":
+          filtered = filtered.filter(r => r.priceForTwo >= 500 && r.priceForTwo <= 1000);
+          break;
+        case "1000-2000":
+          filtered = filtered.filter(r => r.priceForTwo >= 1000 && r.priceForTwo <= 2000);
+          break;
+        case "above-2000":
+          filtered = filtered.filter(r => r.priceForTwo > 2000);
+          break;
+      }
+    }
+
+    // Rating filter
+    if (ratingFilter) {
+      const minRating = parseFloat(ratingFilter);
+      filtered = filtered.filter(r => r.rating >= minRating);
+    }
+
+    // Dining type filter
+    if (diningTypeFilter) {
+      filtered = filtered.filter(r =>
+        r.dineTypes.some(d => d.toLowerCase().includes(diningTypeFilter.toLowerCase()))
+      );
+    }
+
+    setFilteredRestaurants(filtered);
+  }, [searchQuery, cuisineFilter, priceFilter, ratingFilter, diningTypeFilter]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Filters are applied via useEffect
+  };
+
+  const clearFilters = () => {
+    setCuisineFilter("");
+    setPriceFilter("");
+    setRatingFilter("");
+    setDiningTypeFilter("");
+    setSearchQuery("");
+  };
+
+  const openInGoogleMaps = (restaurant: Restaurant) => {
+    const url = `https://www.google.com/maps?q=${restaurant.location.lat},${restaurant.location.lng}`;
+    window.open(url, '_blank');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -108,7 +106,7 @@ const Search = () => {
       <div className="pt-20 pb-16">
         <div className="container mx-auto px-4">
           {/* Search Header */}
-          <div className="bg-white rounded-lg p-6 shadow-lg mb-8">
+          <form onSubmit={handleSearch} className="bg-white rounded-lg p-6 shadow-lg mb-8">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
                 <SearchIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -129,12 +127,14 @@ const Search = () => {
                 />
               </div>
               <Button 
+                type="submit"
                 size="lg" 
                 className="h-12 px-8 bg-orange-500 hover:bg-orange-600"
               >
                 Search
               </Button>
               <Button 
+                type="button"
                 variant="outline"
                 size="lg"
                 className="h-12 px-4"
@@ -147,109 +147,164 @@ const Search = () => {
 
             {/* Filters */}
             {showFilters && (
-              <div className="mt-6 pt-6 border-t grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Cuisine</label>
-                  <select className="w-full p-2 border rounded-md">
-                    <option>All Cuisines</option>
-                    <option>Indian</option>
-                    <option>Chinese</option>
-                    <option>Italian</option>
-                    <option>Continental</option>
-                  </select>
+              <div className="mt-6 pt-6 border-t">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-semibold text-gray-800">Filter Results</h3>
+                  <Button variant="ghost" size="sm" onClick={clearFilters}>
+                    <X className="h-4 w-4 mr-1" />
+                    Clear All
+                  </Button>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
-                  <select className="w-full p-2 border rounded-md">
-                    <option>All Prices</option>
-                    <option>Under ₹500</option>
-                    <option>₹500 - ₹1000</option>
-                    <option>₹1000 - ₹2000</option>
-                    <option>Above ₹2000</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
-                  <select className="w-full p-2 border rounded-md">
-                    <option>All Ratings</option>
-                    <option>4.5+ Stars</option>
-                    <option>4.0+ Stars</option>
-                    <option>3.5+ Stars</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Dining Type</label>
-                  <select className="w-full p-2 border rounded-md">
-                    <option>All Types</option>
-                    <option>Dine-in</option>
-                    <option>Takeaway</option>
-                    <option>Delivery</option>
-                  </select>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Cuisine</label>
+                    <select 
+                      className="w-full p-2 border rounded-md"
+                      value={cuisineFilter}
+                      onChange={(e) => setCuisineFilter(e.target.value)}
+                    >
+                      <option value="">All Cuisines</option>
+                      <option value="South Indian">South Indian</option>
+                      <option value="North Indian">North Indian</option>
+                      <option value="Chinese">Chinese</option>
+                      <option value="Continental">Continental</option>
+                      <option value="Biryani">Biryani</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
+                    <select 
+                      className="w-full p-2 border rounded-md"
+                      value={priceFilter}
+                      onChange={(e) => setPriceFilter(e.target.value)}
+                    >
+                      <option value="">All Prices</option>
+                      <option value="under-500">Under ₹500</option>
+                      <option value="500-1000">₹500 - ₹1000</option>
+                      <option value="1000-2000">₹1000 - ₹2000</option>
+                      <option value="above-2000">Above ₹2000</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                    <select 
+                      className="w-full p-2 border rounded-md"
+                      value={ratingFilter}
+                      onChange={(e) => setRatingFilter(e.target.value)}
+                    >
+                      <option value="">All Ratings</option>
+                      <option value="4.5">4.5+ Stars</option>
+                      <option value="4.0">4.0+ Stars</option>
+                      <option value="3.5">3.5+ Stars</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Dining Type</label>
+                    <select 
+                      className="w-full p-2 border rounded-md"
+                      value={diningTypeFilter}
+                      onChange={(e) => setDiningTypeFilter(e.target.value)}
+                    >
+                      <option value="">All Types</option>
+                      <option value="Fine Dining">Fine Dining</option>
+                      <option value="Family">Family Restaurants</option>
+                      <option value="Buffet">Buffet</option>
+                      <option value="Quick Bites">Quick Bites</option>
+                      <option value="Cafe">Cafes</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             )}
-          </div>
+          </form>
 
           {/* Results Header */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800">
-              {isNearby ? "Restaurants Near You" : "Search Results"}
+              {isNearby ? "Restaurants Near You" : searchQuery ? `Results for "${searchQuery}"` : "All Restaurants"}
             </h2>
-            <p className="text-gray-600">{mockRestaurants.length} restaurants found</p>
+            <p className="text-gray-600">{filteredRestaurants.length} restaurants found</p>
           </div>
 
           {/* Restaurant Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {mockRestaurants.map((restaurant) => (
-              <div 
-                key={restaurant.id}
-                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
-              >
+          {filteredRestaurants.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredRestaurants.map((restaurant) => (
                 <div 
-                  className="h-48 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${restaurant.image})` }}
-                />
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">{restaurant.name}</h3>
-                  <p className="text-gray-600 mb-3">{restaurant.cuisine}</p>
-                  
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center">
-                      <div className="bg-green-500 text-white px-2 py-1 rounded text-sm font-semibold mr-2">
-                        <Star className="h-3 w-3 inline mr-1" />
-                        {restaurant.rating}
-                      </div>
-                      <span className="text-gray-500 text-sm">({restaurant.reviews} reviews)</span>
+                  key={restaurant.id}
+                  className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
+                >
+                  <div 
+                    className="h-48 bg-cover bg-center relative"
+                    style={{ backgroundImage: `url(${restaurant.image})` }}
+                  >
+                    <div className="absolute top-3 right-3 flex gap-2">
+                      {restaurant.cuisine.slice(0, 1).map((c, i) => (
+                        <span key={i} className="bg-white/90 text-gray-800 px-2 py-1 rounded text-xs font-medium">
+                          {c}
+                        </span>
+                      ))}
                     </div>
-                    <span className="text-gray-700 font-semibold">{restaurant.price}</span>
                   </div>
-                  
-                  <div className="flex items-center text-gray-500 text-sm mb-4">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    <span className="mr-4">{restaurant.location}</span>
-                    {isNearby && (
-                      <>
-                        <span className="mr-4">• {restaurant.distance}</span>
-                        <Clock className="h-4 w-4 mr-1" />
-                        <span>{restaurant.time}</span>
-                      </>
-                    )}
-                  </div>
-                  
-                  <div className="flex gap-2">
-                    <Button variant="outline" className="flex-1">
-                      View Details
-                    </Button>
-                    <Button className="flex-1 bg-orange-500 hover:bg-orange-600">
-                      Book Table
-                    </Button>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">{restaurant.name}</h3>
+                    <p className="text-gray-600 mb-3">{restaurant.cuisine.join(", ")}</p>
+                    
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center">
+                        <div className="bg-green-500 text-white px-2 py-1 rounded text-sm font-semibold mr-2 flex items-center">
+                          <Star className="h-3 w-3 mr-1" />
+                          {restaurant.rating}
+                        </div>
+                        <span className="text-gray-500 text-sm">({restaurant.reviews} reviews)</span>
+                      </div>
+                      <span className="text-gray-700 font-semibold">₹{restaurant.priceForTwo} for two</span>
+                    </div>
+                    
+                    <div className="flex items-center text-gray-500 text-sm mb-4">
+                      <MapPin className="h-4 w-4 mr-1" />
+                      <span className="mr-4 truncate">{restaurant.address.split(',')[0]}</span>
+                      <Clock className="h-4 w-4 mr-1" />
+                      <span>{restaurant.workingHours}</span>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <Link to={`/restaurant/${restaurant.id}`} className="flex-1">
+                        <Button variant="outline" className="w-full">
+                          View Details
+                        </Button>
+                      </Link>
+                      <Button 
+                        variant="outline"
+                        className="px-3"
+                        onClick={() => openInGoogleMaps(restaurant)}
+                      >
+                        <MapPin className="h-4 w-4" />
+                      </Button>
+                      <Link to={`/restaurant/${restaurant.id}#booking`} className="flex-1">
+                        <Button className="w-full bg-orange-500 hover:bg-orange-600">
+                          Book Table
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-white rounded-lg shadow">
+              <div className="text-6xl mb-4">🍽️</div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">No restaurants found</h3>
+              <p className="text-gray-600 mb-6">Try adjusting your filters or search terms</p>
+              <Button onClick={clearFilters} className="bg-orange-500 hover:bg-orange-600">
+                Clear Filters
+              </Button>
+            </div>
+          )}
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };

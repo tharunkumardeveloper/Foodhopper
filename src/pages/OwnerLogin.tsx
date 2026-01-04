@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, User, Phone, Upload, Store } from "lucide-react";
 import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -319,6 +320,8 @@ const OwnerLogin = () => {
           </div>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };

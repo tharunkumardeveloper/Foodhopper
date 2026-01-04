@@ -15,6 +15,8 @@ import RestaurantDetail from "./pages/RestaurantDetail";
 import CityPage from "./pages/CityPage";
 import CategoryPage from "./pages/CategoryPage";
 import Dashboard from "./pages/Dashboard";
+import OwnerDashboard from "./pages/OwnerDashboard";
+import UserDashboard from "./pages/UserDashboard";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +34,8 @@ const App = () => (
           <Route path="/help" element={<Help />} />
           <Route path="/owner-login" element={<OwnerLogin />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/owner-dashboard" element={<OwnerDashboard />} />
+          <Route path="/user-dashboard" element={<UserDashboard />} />
           <Route path="/restaurant/:id" element={<RestaurantDetail />} />
           <Route path="/city/:cityName" element={<CityPage />} />
           <Route path="/category/:categoryName" element={<CategoryPage />} />

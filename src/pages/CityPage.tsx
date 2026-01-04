@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Star, MapPin, Clock, Users } from "lucide-react";
 import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -166,6 +166,8 @@ const CityPage = () => {
           </div>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };
