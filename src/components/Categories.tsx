@@ -84,7 +84,7 @@ const Categories = () => {
           <p className="text-lg text-gray-600">Find restaurants that match your mood</p>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-6">
           {categories.map((category) => (
             <Link 
               key={category.name}
@@ -94,18 +94,18 @@ const Categories = () => {
               <div className="relative">
                 {categoryImages[category.name] && (
                   <div 
-                    className="h-32 bg-cover bg-center rounded-lg"
+                    className="h-24 md:h-32 bg-cover bg-center rounded-lg"
                     style={{ backgroundImage: `url(${categoryImages[category.name]})` }}
                   />
                 )}
                 {!categoryImages[category.name] && (
-                  <div className={`h-32 bg-gradient-to-br ${category.color} rounded-lg`} />
+                  <div className={`h-24 md:h-32 bg-gradient-to-br ${category.color} rounded-lg`} />
                 )}
                 <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-85 rounded-lg`} />
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4 rounded-lg group-hover:scale-105 transition-all duration-300">
-                  <div className="text-3xl mb-2">{category.icon}</div>
-                  <h3 className="font-bold text-sm mb-1 text-center">{category.name}</h3>
-                  <p className="text-xs opacity-90 text-center">{category.count}</p>
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-2 md:p-4 rounded-lg group-hover:scale-105 transition-all duration-300">
+                  <div className="text-xl md:text-3xl mb-1 md:mb-2">{category.icon}</div>
+                  <h3 className="font-bold text-xs md:text-sm mb-1 text-center">{category.name}</h3>
+                  <p className="text-xs opacity-90 text-center hidden sm:block">{category.count}</p>
                 </div>
               </div>
             </Link>

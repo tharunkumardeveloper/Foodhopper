@@ -133,7 +133,7 @@ const Chatbot = () => {
       {/* Chatbot Toggle Button */}
       <Button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 h-14 w-14 rounded-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-lg z-40 transition-all duration-300 ${
+        className={`fixed bottom-4 right-4 md:bottom-6 md:right-6 h-12 w-12 md:h-14 md:w-14 rounded-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-lg z-40 transition-all duration-300 ${
           isOpen ? 'scale-0' : 'scale-100'
         }`}
       >
@@ -142,9 +142,9 @@ const Chatbot = () => {
 
       {/* Chatbot Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-2xl shadow-2xl z-50 flex flex-col border border-gray-200">
+        <div className="fixed inset-0 md:inset-auto md:bottom-4 md:right-4 md:w-96 md:h-[600px] w-full h-full md:rounded-2xl bg-white shadow-2xl z-50 flex flex-col border border-gray-200">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-2xl">
+          <div className="flex items-center justify-between p-3 md:p-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-2xl md:rounded-t-2xl">
             <div className="flex items-center space-x-3">
               <div className="h-8 w-8 bg-white/20 rounded-full flex items-center justify-center">
                 <Bot className="h-5 w-5" />
@@ -351,7 +351,7 @@ const Chatbot = () => {
           )}
 
           {/* Input */}
-          <div className="p-4 border-t border-gray-100">
+          <div className="p-3 md:p-4 border-t border-gray-100">
             <div className="flex space-x-2">
               <Input
                 value={inputMessage}
@@ -359,13 +359,13 @@ const Chatbot = () => {
                 placeholder="Ask me about restaurants..."
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                 disabled={isLoading}
-                className="flex-1"
+                className="flex-1 text-sm md:text-base"
               />
               <Button
                 onClick={() => handleSendMessage()}
                 disabled={isLoading || !inputMessage.trim()}
                 size="sm"
-                className="bg-orange-500 hover:bg-orange-600"
+                className="bg-orange-500 hover:bg-orange-600 px-3"
               >
                 <Send className="h-4 w-4" />
               </Button>

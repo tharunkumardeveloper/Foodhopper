@@ -37,16 +37,16 @@ const Testimonials = () => {
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">What Our Users Say</h2>
-          <p className="text-lg text-gray-600">Real experiences from real food lovers</p>
+        <div className="text-center mb-8 md:mb-12">
+          <h2 className="text-2xl md:text-4xl font-bold text-gray-800 mb-2 md:mb-4">What Our Users Say</h2>
+          <p className="text-base md:text-lg text-gray-600">Real experiences from real food lovers</p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {testimonials.map((testimonial, index) => (
             <div 
               key={index}
-              className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-white rounded-lg p-4 md:p-6 shadow-lg hover:shadow-xl transition-all duration-300"
             >
               <div className="flex items-center mb-4">
                 {userAvatars[index] && (

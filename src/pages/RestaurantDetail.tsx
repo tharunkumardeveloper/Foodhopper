@@ -177,26 +177,26 @@ const RestaurantDetail = () => {
         </div>
 
         {/* Main Content */}
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="container mx-auto px-4 py-6 md:py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
             {/* Left Column - Restaurant Info */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-4 md:space-y-6">
               {/* Quick Info */}
               <Card>
-                <CardContent className="p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <CardContent className="p-4 md:p-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
                     <div className="flex items-center">
-                      <Clock className="h-5 w-5 text-gray-500 mr-2" />
+                      <Clock className="h-4 w-4 md:h-5 md:w-5 text-gray-500 mr-2" />
                       <div>
-                        <p className="font-semibold">Working Hours</p>
-                        <p className="text-sm text-gray-600">{restaurant.workingHours}</p>
+                        <p className="font-semibold text-sm md:text-base">Working Hours</p>
+                        <p className="text-xs md:text-sm text-gray-600">{restaurant.workingHours}</p>
                       </div>
                     </div>
                     <div className="flex items-center">
-                      <Phone className="h-5 w-5 text-gray-500 mr-2" />
+                      <Phone className="h-4 w-4 md:h-5 md:w-5 text-gray-500 mr-2" />
                       <div>
-                        <p className="font-semibold">Contact</p>
-                        <p className="text-sm text-gray-600">{restaurant.phone}</p>
+                        <p className="font-semibold text-sm md:text-base">Contact</p>
+                        <p className="text-xs md:text-sm text-gray-600">{restaurant.phone}</p>
                       </div>
                     </div>
                     <div className="flex items-center">
@@ -295,7 +295,7 @@ const RestaurantDetail = () => {
               )}
 
               {activeTab === "gallery" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                   {restaurant.gallery.map((image, index) => (
                     <div 
                       key={index}
