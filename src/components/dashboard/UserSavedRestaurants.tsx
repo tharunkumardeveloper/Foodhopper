@@ -22,7 +22,7 @@ const UserSavedRestaurants = () => {
       cuisine: "South Indian, Biryani",
       rating: 4.5,
       location: "T. Nagar, Chennai",
-      image: restaurantImages[3] || "https://cdn.pixabay.com/photo/2016/03/05/19/02/hamburger-1238246_1920.jpg",
+      image: restaurantImages[3] || "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
       distance: "2.5 km"
     },
     {
@@ -31,7 +31,7 @@ const UserSavedRestaurants = () => {
       cuisine: "Vegetarian, South Indian",
       rating: 4.3,
       location: "Anna Nagar, Chennai",
-      image: restaurantImages[4] || "https://cdn.pixabay.com/photo/2017/06/06/22/46/mediterranean-cuisine-2378758_1920.jpg",
+      image: restaurantImages[4] || "https://images.unsplash.com/photo-1574484284002-952d92456975?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
       distance: "3.2 km"
     },
     {
@@ -40,7 +40,7 @@ const UserSavedRestaurants = () => {
       cuisine: "Traditional South Indian",
       rating: 4.7,
       location: "Park Hyatt, Chennai",
-      image: restaurantImages[5] || "https://cdn.pixabay.com/photo/2017/01/26/02/06/platter-2009590_1920.jpg",
+      image: restaurantImages[5] || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
       distance: "5.1 km"
     }
   ];

@@ -27,7 +27,7 @@ const UserBookings = () => {
       time: "7:00 PM",
       guests: 4,
       status: "confirmed",
-      image: restaurantImages[0] || "https://cdn.pixabay.com/photo/2017/09/16/19/21/salad-2756467_1920.jpg"
+      image: restaurantImages[0] || "https://images.unsplash.com/photo-1626132647523-66f5bf380027?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     },
     {
       id: "book-002", 
@@ -36,7 +36,16 @@ const UserBookings = () => {
       time: "8:30 PM",
       guests: 2,
       status: "completed",
-      image: restaurantImages[1] || "https://cdn.pixabay.com/photo/2017/06/06/22/46/mediterranean-cuisine-2378758_1920.jpg"
+      image: restaurantImages[1] || "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+      id: "book-003",
+      restaurant: "Chettinad Mansion",
+      date: "2024-06-18",
+      time: "7:30 PM",
+      guests: 6,
+      status: "completed",
+      image: restaurantImages[2] || "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     }
   ];
 

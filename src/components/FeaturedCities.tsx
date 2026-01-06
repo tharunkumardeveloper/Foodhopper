@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { fetchCityImages } from "../utils/pixabayApi";
 
 const FeaturedCities = () => {
@@ -51,15 +50,14 @@ const FeaturedCities = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">Featured Cities</h2>
-          <p className="text-lg text-gray-600">Discover amazing restaurants in these popular destinations</p>
+          <p className="text-lg text-gray-600">Coming soon to these popular destinations</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cities.map((city, index) => (
-            <Link 
+            <div 
               key={city.name}
-              to={`/city/${city.name}`}
-              className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="relative group overflow-hidden rounded-lg shadow-lg transition-all duration-300"
             >
               {cityImages[index] && (
                 <div 
@@ -77,11 +75,11 @@ const FeaturedCities = () => {
                 <p className="text-gray-200 text-sm">{city.description}</p>
               </div>
               <div className="absolute top-4 right-4">
-                <div className="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                  Popular
+                <div className="bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                  Coming Soon
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>

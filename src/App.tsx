@@ -10,13 +10,13 @@ import Search from "./pages/Search";
 import Contact from "./pages/Contact";
 import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
-import OwnerLogin from "./pages/OwnerLogin";
 import RestaurantDetail from "./pages/RestaurantDetail";
 import CityPage from "./pages/CityPage";
 import CategoryPage from "./pages/CategoryPage";
 import Dashboard from "./pages/Dashboard";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import UserDashboard from "./pages/UserDashboard";
+import Chatbot from "./components/Chatbot";
 
 const queryClient = new QueryClient();
 
@@ -32,7 +32,7 @@ const App = () => (
           <Route path="/search" element={<Search />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/help" element={<Help />} />
-          <Route path="/owner-login" element={<OwnerLogin />} />
+          <Route path="/owner-login" element={<OwnerDashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/owner-dashboard" element={<OwnerDashboard />} />
           <Route path="/user-dashboard" element={<UserDashboard />} />
@@ -42,6 +42,7 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <Chatbot />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

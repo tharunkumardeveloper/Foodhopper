@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { 
   Calendar, 
@@ -13,7 +13,10 @@ import {
   Camera,
   Trash2,
   Edit,
-  ExternalLink
+  ExternalLink,
+  TrendingUp,
+  Award,
+  BookOpen
 } from "lucide-react";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
@@ -24,16 +27,38 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { fetchRestaurantImages, fetchFoodImages, fetchUserAvatars } from "../utils/pixabayApi";
 
 const UserDashboard = () => {
   const [activeTab, setActiveTab] = useState("bookings");
+  const [restaurantImages, setRestaurantImages] = useState<string[]>([]);
+  const [foodImages, setFoodImages] = useState<string[]>([]);
+  const [userAvatars, setUserAvatars] = useState<string[]>([]);
   const [profileData, setProfileData] = useState({
     name: "John Doe",
     email: "john@example.com",
     phone: "+91 98765 43210",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
+    avatar: ""
   });
   const { toast } = useToast();
+
+  useEffect(() => {
+    const loadImages = async () => {
+      const [restaurants, foods, avatars] = await Promise.all([
+        fetchRestaurantImages(),
+        fetchFoodImages(),
+        fetchUserAvatars()
+      ]);
+      setRestaurantImages(restaurants);
+      setFoodImages(foods);
+      setUserAvatars(avatars);
+      setProfileData(prev => ({
+        ...prev,
+        avatar: avatars[0] || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
+      }));
+    };
+    loadImages();
+  }, []);
 
   // Mock data - in real app, this would come from API
   const bookings = [
@@ -44,7 +69,7 @@ const UserDashboard = () => {
       time: "7:00 PM",
       guests: 4,
       status: "confirmed",
-      image: "https://images.unsplash.com/photo-1630383249896-424e482df921?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+      image: restaurantImages[0] || "https://images.unsplash.com/photo-1626132647523-66f5bf380027?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     },
     {
       id: "book-002", 
@@ -53,7 +78,16 @@ const UserDashboard = () => {
       time: "8:30 PM",
       guests: 2,
       status: "completed",
-      image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+      image: restaurantImages[1] || "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+      id: "book-003",
+      restaurant: "Chettinad Mansion",
+      date: "2024-06-18",
+      time: "7:30 PM",
+      guests: 6,
+      status: "completed",
+      image: restaurantImages[2] || "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     }
   ];
 
@@ -63,14 +97,32 @@ const UserDashboard = () => {
       name: "Murugan Idli Shop",
       cuisine: "South Indian",
       rating: 4.5,
-      image: "https://images.unsplash.com/photo-1630383249896-424e482df921?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+      priceForTwo: 300,
+      image: restaurantImages[3] || "https://images.unsplash.com/photo-1626132647523-66f5bf380027?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     },
     {
       id: "absolute-barbecue",
       name: "Absolute Barbecue", 
       cuisine: "Barbecue",
       rating: 4.7,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+      priceForTwo: 1500,
+      image: restaurantImages[4] || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+      id: "buhari-hotel",
+      name: "Buhari Hotel",
+      cuisine: "Biryani",
+      rating: 4.4,
+      priceForTwo: 600,
+      image: restaurantImages[5] || "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+      id: "kerala-kitchen",
+      name: "Kerala Kitchen",
+      cuisine: "Kerala",
+      rating: 4.5,
+      priceForTwo: 650,
+      image: restaurantImages[6] || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     }
   ];
 
@@ -81,7 +133,23 @@ const UserDashboard = () => {
       rating: 5,
       comment: "Amazing biryani! The flavors were incredible and service was excellent.", 
       date: "2024-06-15",
-      image: "https://images.unsplash.com/photo-1563379091339-03246967d4d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+      image: foodImages[0] || "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+      id: "rev-002",
+      restaurant: "Chettinad Mansion",
+      rating: 4,
+      comment: "Authentic Chettinad flavors with perfect spice levels. The crab masala was outstanding!",
+      date: "2024-06-10",
+      image: foodImages[1] || "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+      id: "rev-003",
+      restaurant: "Kerala Kitchen",
+      rating: 5,
+      comment: "The fish moilee was exceptional! Authentic Kerala taste with perfect coconut balance.",
+      date: "2024-06-05",
+      image: foodImages[2] || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     }
   ];
 
@@ -121,7 +189,7 @@ const UserDashboard = () => {
           <div className="mb-8">
             <div className="flex items-center space-x-4">
               <div 
-                className="w-16 h-16 rounded-full bg-cover bg-center"
+                className="w-16 h-16 rounded-full bg-cover bg-center border-4 border-orange-200"
                 style={{ backgroundImage: `url(${profileData.avatar})` }}
               />
               <div>
@@ -129,6 +197,57 @@ const UserDashboard = () => {
                 <p className="text-gray-600">Manage your bookings, reviews, and preferences</p>
               </div>
             </div>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Total Bookings</p>
+                    <p className="text-2xl font-bold text-gray-900">{bookings.length}</p>
+                  </div>
+                  <Calendar className="h-8 w-8 text-blue-500" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Saved Restaurants</p>
+                    <p className="text-2xl font-bold text-gray-900">{savedRestaurants.length}</p>
+                  </div>
+                  <Heart className="h-8 w-8 text-red-500" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Reviews Written</p>
+                    <p className="text-2xl font-bold text-gray-900">{reviews.length}</p>
+                  </div>
+                  <Star className="h-8 w-8 text-yellow-500" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Avg Rating Given</p>
+                    <p className="text-2xl font-bold text-gray-900">4.7</p>
+                  </div>
+                  <Award className="h-8 w-8 text-green-500" />
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Dashboard Tabs */}
@@ -216,41 +335,41 @@ const UserDashboard = () => {
 
             {/* Saved Restaurants Tab */}
             <TabsContent value="saved" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {savedRestaurants.map((restaurant) => (
-                  <Card key={restaurant.id}>
-                    <CardContent className="p-6">
-                      <div className="flex justify-between items-start">
-                        <div className="flex space-x-4">
-                          <div 
-                            className="w-20 h-20 rounded-lg bg-cover bg-center"
-                            style={{ backgroundImage: `url(${restaurant.image})` }}
-                          />
-                          <div>
-                            <h3 className="text-lg font-semibold">{restaurant.name}</h3>
-                            <p className="text-gray-600">{restaurant.cuisine}</p>
-                            <div className="flex items-center mt-1">
-                              <Star className="h-4 w-4 text-yellow-400 mr-1" />
-                              <span className="text-sm">{restaurant.rating}</span>
-                            </div>
-                          </div>
+                  <Card key={restaurant.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <div 
+                      className="h-48 bg-cover bg-center"
+                      style={{ backgroundImage: `url(${restaurant.image})` }}
+                    />
+                    <CardContent className="p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="text-lg font-semibold">{restaurant.name}</h3>
+                        <Heart className="h-5 w-5 text-red-500 fill-current" />
+                      </div>
+                      <p className="text-gray-600 text-sm mb-2">{restaurant.cuisine}</p>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
+                          <span className="text-sm font-medium">{restaurant.rating}</span>
                         </div>
-                        
-                        <div className="flex flex-col space-y-2">
-                          <Link to={`/restaurant/${restaurant.id}`}>
-                            <Button size="sm" className="w-full">
-                              Book Now
-                            </Button>
-                          </Link>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleRemoveSaved(restaurant.id)}
-                          >
-                            <Trash2 className="h-4 w-4 mr-1" />
-                            Remove
+                        <span className="text-sm text-gray-600">₹{restaurant.priceForTwo} for two</span>
+                      </div>
+                      <div className="flex gap-2 mt-4">
+                        <Link to={`/restaurant/${restaurant.id}`} className="flex-1">
+                          <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600">
+                            Book Now
                           </Button>
-                        </div>
+                        </Link>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleRemoveSaved(restaurant.id)}
+                          className="flex-1"
+                        >
+                          <Trash2 className="h-4 w-4 mr-1" />
+                          Remove
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>

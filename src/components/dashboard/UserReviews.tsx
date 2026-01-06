@@ -22,7 +22,7 @@ const UserReviews = () => {
       rating: 5,
       comment: "Amazing biryani! The flavors were incredible and service was excellent.", 
       date: "2024-06-15",
-      image: foodImages[0] || "https://cdn.pixabay.com/photo/2016/03/05/19/02/hamburger-1238246_1920.jpg"
+      image: foodImages[0] || "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     },
     {
       id: "rev-002",
@@ -30,7 +30,7 @@ const UserReviews = () => {
       rating: 4,
       comment: "Great vegetarian options and authentic South Indian taste. Highly recommended!",
       date: "2024-06-10",
-      image: foodImages[1] || "https://cdn.pixabay.com/photo/2017/09/16/19/21/salad-2756467_1920.jpg"
+      image: foodImages[1] || "https://images.unsplash.com/photo-1574484284002-952d92456975?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     },
     {
       id: "rev-003",
@@ -38,7 +38,7 @@ const UserReviews = () => {
       rating: 5,
       comment: "Exceptional fine dining experience with traditional recipes beautifully presented.",
       date: "2024-06-05", 
-      image: foodImages[2] || "https://cdn.pixabay.com/photo/2018/07/18/19/12/pasta-3547078_1920.jpg"
+      image: foodImages[2] || "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     }
   ];
 

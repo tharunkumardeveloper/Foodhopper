@@ -18,10 +18,14 @@ const CityPage = () => {
   const [sortBy, setSortBy] = useState("rating");
 
   useEffect(() => {
-    // In real app, fetch restaurants by city from API
-    // For now, using Chennai restaurants as default
-    setRestaurants(chennaiRestaurants);
-    setFilteredRestaurants(chennaiRestaurants);
+    // Only show restaurants for Chennai, others show coming soon
+    if (cityName?.toLowerCase() === 'chennai') {
+      setRestaurants(chennaiRestaurants);
+      setFilteredRestaurants(chennaiRestaurants);
+    } else {
+      setRestaurants([]);
+      setFilteredRestaurants([]);
+    }
   }, [cityName]);
 
   useEffect(() => {
@@ -74,8 +78,9 @@ const CityPage = () => {
             </p>
           </div>
 
-          {/* Filters */}
-          <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* Filters - Only show for Chennai */}
+          {cityName?.toLowerCase() === 'chennai' && (
+            <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
             <Input
               placeholder="Search restaurants or cuisine..."
               value={searchTerm}
@@ -107,13 +112,18 @@ const CityPage = () => {
             </Select>
             
             <div className="text-sm text-gray-600 flex items-center">
-              {filteredRestaurants.length} restaurants found
+              {cityName?.toLowerCase() === 'chennai' 
+                ? `${filteredRestaurants.length} restaurants found`
+                : 'Coming soon to this city'
+              }
             </div>
           </div>
+          )}
 
           {/* Restaurant Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredRestaurants.map((restaurant) => (
+          {cityName?.toLowerCase() === 'chennai' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredRestaurants.map((restaurant) => (
               <Card key={restaurant.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div 
                   className="h-48 bg-cover bg-center"
@@ -163,7 +173,24 @@ const CityPage = () => {
                 </CardContent>
               </Card>
             ))}
-          </div>
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="max-w-md mx-auto">
+                <div className="text-6xl font-bold text-gray-300 mb-4">🏗️</div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">Coming Soon to {cityName}!</h3>
+                <p className="text-gray-600 mb-6">
+                  We're working hard to bring amazing restaurants to your city. 
+                  In the meantime, check out our restaurants in Chennai!
+                </p>
+                <Link to="/city/Chennai">
+                  <Button className="bg-orange-500 hover:bg-orange-600">
+                    Explore Chennai Restaurants
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { 
   Store, 
@@ -15,7 +15,10 @@ import {
   MapPin,
   Edit,
   Trash2,
-  Plus
+  Plus,
+  DollarSign,
+  Calendar,
+  Award
 } from "lucide-react";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
@@ -24,25 +27,58 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { fetchRestaurantImages, fetchFoodImages } from "../utils/pixabayApi";
 
 const OwnerDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [restaurantImages, setRestaurantImages] = useState<string[]>([]);
+  const [foodImages, setFoodImages] = useState<string[]>([]);
   const [restaurantData, setRestaurantData] = useState({
     name: "Murugan Idli Shop",
     address: "Besant Nagar Beach Road, Chennai",
     cuisine: ["South Indian", "Vegetarian"],
     rating: 4.5,
     isOpen: true,
-    themeColor: "#f97316"
+    themeColor: "#f97316",
+    heroImage: ""
   });
   
   const [menuItems, setMenuItems] = useState([
     { id: 1, name: "Idli with Sambar", price: 60, category: "Main Course", image: "" },
     { id: 2, name: "Masala Dosa", price: 80, category: "Main Course", image: "" },
-    { id: 3, name: "Filter Coffee", price: 30, category: "Beverages", image: "" }
+    { id: 3, name: "Filter Coffee", price: 30, category: "Beverages", image: "" },
+    { id: 4, name: "Vada Sambar", price: 70, category: "Main Course", image: "" },
+    { id: 5, name: "Rava Upma", price: 50, category: "Main Course", image: "" },
+    { id: 6, name: "Ven Pongal", price: 65, category: "Main Course", image: "" }
   ]);
 
   const { toast } = useToast();
+
+  useEffect(() => {
+    const loadImages = async () => {
+      const [restaurants, foods] = await Promise.all([
+        fetchRestaurantImages(),
+        fetchFoodImages()
+      ]);
+      setRestaurantImages(restaurants);
+      setFoodImages(foods);
+      
+      // Update restaurant hero image
+      setRestaurantData(prev => ({
+        ...prev,
+        heroImage: restaurants[0] || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+      }));
+      
+      // Update menu items with images
+      setMenuItems(prevItems => 
+        prevItems.map((item, index) => ({
+          ...item,
+          image: foods[index] || foods[0] || "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+        }))
+      );
+    };
+    loadImages();
+  }, []);
 
   const handleImageUpload = (type: string) => {
     toast({
@@ -57,7 +93,7 @@ const OwnerDashboard = () => {
       name: "New Dish",
       price: 0,
       category: "Main Course",
-      image: ""
+      image: foodImages[Math.floor(Math.random() * foodImages.length)] || "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     };
     setMenuItems([...menuItems, newItem]);
   };
@@ -122,6 +158,7 @@ const OwnerDashboard = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-600">Today's Bookings</p>
                     <p className="text-2xl font-bold text-gray-900">12</p>
+                    <p className="text-xs text-green-600">+2 from yesterday</p>
                   </div>
                   <Users className="h-8 w-8 text-blue-500" />
                 </div>
@@ -134,6 +171,7 @@ const OwnerDashboard = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-600">This Month</p>
                     <p className="text-2xl font-bold text-gray-900">384</p>
+                    <p className="text-xs text-green-600">+15% from last month</p>
                   </div>
                   <TrendingUp className="h-8 w-8 text-green-500" />
                 </div>
@@ -146,6 +184,7 @@ const OwnerDashboard = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-600">Average Rating</p>
                     <p className="text-2xl font-bold text-gray-900">4.5</p>
+                    <p className="text-xs text-gray-600">Based on 247 reviews</p>
                   </div>
                   <Star className="h-8 w-8 text-yellow-500" />
                 </div>
@@ -156,10 +195,11 @@ const OwnerDashboard = () => {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Status</p>
-                    <p className="text-2xl font-bold text-green-600">Open</p>
+                    <p className="text-sm font-medium text-gray-600">Revenue Today</p>
+                    <p className="text-2xl font-bold text-gray-900">₹8,450</p>
+                    <p className="text-xs text-green-600">+12% from yesterday</p>
                   </div>
-                  <Clock className="h-8 w-8 text-orange-500" />
+                  <DollarSign className="h-8 w-8 text-green-500" />
                 </div>
               </CardContent>
             </Card>
@@ -282,27 +322,29 @@ const OwnerDashboard = () => {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {menuItems.map((item) => (
-                        <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg hover:shadow-md transition-shadow">
                           <div className="flex items-center space-x-4">
-                            <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
-                              <Camera className="h-6 w-6 text-gray-400" />
-                            </div>
+                            <div 
+                              className="w-16 h-16 rounded-lg bg-cover bg-center border-2 border-gray-200"
+                              style={{ backgroundImage: `url(${item.image})` }}
+                            />
                             <div>
                               <h3 className="font-semibold">{item.name}</h3>
-                              <p className="text-gray-600">₹{item.price}</p>
-                              <span className="text-sm text-gray-500">{item.category}</span>
+                              <p className="text-orange-600 font-medium">₹{item.price}</p>
+                              <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">{item.category}</span>
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <Button variant="outline" size="sm">
+                            <Button variant="outline" size="sm" className="hover:bg-blue-50">
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button 
                               variant="outline" 
                               size="sm"
                               onClick={() => handleMenuItemDelete(item.id)}
+                              className="hover:bg-red-50 hover:text-red-600"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>

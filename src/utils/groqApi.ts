@@ -34,15 +34,321 @@ export interface RestaurantRecommendation {
   specialDishes: string[];
 }
 
+export interface DishRecommendation {
+  id: string;
+  name: string;
+  restaurantName: string;
+  restaurantId: string;
+  price: number;
+  description: string;
+  image: string;
+  category: string;
+  isVeg: boolean;
+  isSpicy?: boolean;
+}
+
 export interface OfferRecommendation {
+  id: string;
   title: string;
   description: string;
   discount: string;
   restaurantName: string;
+  restaurantId: string;
   validUntil: string;
   image: string;
   terms: string;
+  originalPrice: number;
+  discountedPrice: number;
 }
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+}
+
+export interface ChatResponse {
+  message: string;
+  suggestions?: string[];
+  recommendations?: RestaurantRecommendation[];
+  dishes?: DishRecommendation[];
+  offers?: OfferRecommendation[];
+}
+
+// Enhanced chatbot function with robust fallback system
+export const getChatbotResponse = async (
+  message: string,
+  conversationHistory: ChatMessage[] = []
+): Promise<ChatResponse> => {
+  // Analyze the message to determine what type of recommendations to provide
+  const lowerMessage = message.toLowerCase();
+  const isAskingForOffers = lowerMessage.includes('offer') || lowerMessage.includes('deal') || lowerMessage.includes('discount') || lowerMessage.includes('promotion');
+  const isAskingForDishes = lowerMessage.includes('dish') || lowerMessage.includes('food') || lowerMessage.includes('menu') || lowerMessage.includes('eat') || lowerMessage.includes('popular');
+  const isAskingForRestaurants = lowerMessage.includes('restaurant') || lowerMessage.includes('place') || lowerMessage.includes('where') || lowerMessage.includes('romantic') || lowerMessage.includes('family');
+
+  // Prepare fallback data first
+  const fallbackData = generateFallbackRecommendations(lowerMessage, isAskingForOffers, isAskingForDishes, isAskingForRestaurants);
+
+  try {
+    // Only try Groq API if we have the key
+    if (!GROQ_API_KEY) {
+      return fallbackData;
+    }
+
+    const context = `You are a helpful restaurant recommendation assistant for Chennai, India. 
+    You help users find restaurants, dishes, and dining experiences based on their preferences.
+    
+    Available restaurants in Chennai:
+    ${chennaiRestaurants.slice(0, 5).map(r => 
+      `${r.name}: ${r.cuisine.join(', ')} cuisine, ₹${r.priceForTwo} for two, Rating: ${r.rating}/5`
+    ).join('\n')}
+    
+    Guidelines:
+    - Be friendly and conversational
+    - Provide specific recommendations
+    - Keep responses concise (max 2 sentences)
+    - Focus on helping the user find what they're looking for`;
+
+    const messages = [
+      { role: 'system', content: context },
+      { role: 'user', content: message }
+    ];
+
+    const completion = await groq.chat.completions.create({
+      messages: messages as any,
+      model: 'llama3-8b-8192',
+      temperature: 0.7,
+      max_tokens: 200,
+    });
+
+    const response = completion.choices[0]?.message?.content;
+    
+    // If we get a response from Groq, use it with our fallback recommendations
+    if (response) {
+      return {
+        ...fallbackData,
+        message: response
+      };
+    } else {
+      return fallbackData;
+    }
+
+  } catch (error) {
+    console.error('Groq API error, using fallback:', error);
+    // Return fallback data with recommendations
+    return fallbackData;
+  }
+};
+
+// Generate fallback recommendations based on user query
+const generateFallbackRecommendations = (
+  lowerMessage: string,
+  isAskingForOffers: boolean,
+  isAskingForDishes: boolean,
+  isAskingForRestaurants: boolean
+): ChatResponse => {
+  const recommendations: RestaurantRecommendation[] = [];
+  const dishes: DishRecommendation[] = [];
+  const offers: OfferRecommendation[] = [];
+
+  // Generate appropriate message
+  let message = "Here are some great recommendations for you!";
+  
+  if (isAskingForOffers) {
+    message = "I found some amazing offers for you! Check out these special deals:";
+  } else if (isAskingForDishes) {
+    message = "Here are some delicious dishes you might love:";
+  } else if (isAskingForRestaurants) {
+    message = "I've found some perfect restaurants for you:";
+  }
+
+  // Get restaurant recommendations
+  if (isAskingForRestaurants || (!isAskingForOffers && !isAskingForDishes)) {
+    let selectedRestaurants = chennaiRestaurants.slice(0, 3);
+    
+    // Filter based on user preferences
+    if (lowerMessage.includes('romantic')) {
+      selectedRestaurants = chennaiRestaurants.filter(r => 
+        r.priceForTwo > 800 || r.rating > 4.4
+      ).slice(0, 3);
+      message = "Perfect romantic restaurants for a special evening:";
+    } else if (lowerMessage.includes('family')) {
+      selectedRestaurants = chennaiRestaurants.filter(r => 
+        r.features.includes('Family Friendly') || r.dineTypes.includes('Family Dining')
+      ).slice(0, 3);
+      message = "Great family-friendly restaurants:";
+    } else if (lowerMessage.includes('budget')) {
+      selectedRestaurants = chennaiRestaurants.filter(r => r.priceForTwo < 600).slice(0, 3);
+      message = "Budget-friendly restaurants with great food:";
+    } else if (lowerMessage.includes('south indian')) {
+      selectedRestaurants = chennaiRestaurants.filter(r => 
+        r.cuisine.includes('South Indian')
+      ).slice(0, 3);
+      message = "Authentic South Indian restaurants:";
+    }
+
+    selectedRestaurants.forEach(restaurant => {
+      recommendations.push({
+        id: restaurant.id,
+        name: restaurant.name,
+        reason: `${restaurant.cuisine.join(' & ')} cuisine with ${restaurant.rating} rating`,
+        cuisine: restaurant.cuisine,
+        rating: restaurant.rating,
+        priceForTwo: restaurant.priceForTwo,
+        image: restaurant.image,
+        specialDishes: restaurant.menu.slice(0, 3).map(m => m.name)
+      });
+    });
+  }
+
+  // Get dish recommendations
+  if (isAskingForDishes) {
+    const allDishes = chennaiRestaurants.flatMap(restaurant => 
+      restaurant.menu.map(dish => ({
+        ...dish,
+        restaurantName: restaurant.name,
+        restaurantId: restaurant.id
+      }))
+    );
+
+    let filteredDishes = allDishes;
+    
+    if (lowerMessage.includes('veg')) {
+      filteredDishes = allDishes.filter(dish => dish.isVeg);
+      message = "Delicious vegetarian dishes for you:";
+    } else if (lowerMessage.includes('spicy')) {
+      filteredDishes = allDishes.filter(dish => dish.isSpicy);
+      message = "Spicy dishes to satisfy your cravings:";
+    } else if (lowerMessage.includes('biryani')) {
+      filteredDishes = allDishes.filter(dish => dish.name.toLowerCase().includes('biryani'));
+      message = "Best biryani dishes in Chennai:";
+    } else if (lowerMessage.includes('breakfast')) {
+      filteredDishes = allDishes.filter(dish => 
+        dish.name.toLowerCase().includes('idli') || 
+        dish.name.toLowerCase().includes('dosa') || 
+        dish.name.toLowerCase().includes('upma')
+      );
+      message = "Perfect breakfast dishes to start your day:";
+    } else if (lowerMessage.includes('popular')) {
+      // Get dishes from highly rated restaurants
+      filteredDishes = allDishes.filter(dish => {
+        const restaurant = chennaiRestaurants.find(r => r.id === dish.restaurantId);
+        return restaurant && restaurant.rating > 4.3;
+      });
+      message = "Most popular dishes everyone loves:";
+    }
+
+    const selectedDishes = filteredDishes.slice(0, 4);
+    
+    selectedDishes.forEach(dish => {
+      dishes.push({
+        id: dish.id,
+        name: dish.name,
+        restaurantName: dish.restaurantName,
+        restaurantId: dish.restaurantId,
+        price: dish.price,
+        description: dish.description,
+        image: dish.image,
+        category: dish.category,
+        isVeg: dish.isVeg,
+        isSpicy: dish.isSpicy
+      });
+    });
+  }
+
+  // Generate offers
+  if (isAskingForOffers) {
+    const offerRestaurants = chennaiRestaurants.slice(0, 4);
+    
+    offerRestaurants.forEach((restaurant, index) => {
+      const discountPercentages = [25, 20, 30, 15];
+      const discountPercentage = discountPercentages[index];
+      const originalPrice = restaurant.priceForTwo;
+      const discountedPrice = Math.round(originalPrice * (1 - discountPercentage / 100));
+      
+      offers.push({
+        id: `offer-${restaurant.id}`,
+        title: `${discountPercentage}% OFF at ${restaurant.name}`,
+        description: `Enjoy authentic ${restaurant.cuisine.join(' & ')} cuisine with special discount`,
+        discount: `${discountPercentage}% OFF`,
+        restaurantName: restaurant.name,
+        restaurantId: restaurant.id,
+        validUntil: '2024-12-31',
+        image: restaurant.image,
+        terms: `Valid on orders above ₹${Math.round(originalPrice * 0.4)}. Cannot be combined with other offers.`,
+        originalPrice,
+        discountedPrice
+      });
+    });
+  }
+
+  // Generate contextual suggestions
+  let suggestions: string[] = [];
+  if (isAskingForOffers) {
+    suggestions = [
+      "Show me more offers",
+      "Find budget restaurants",
+      "What's the best deal today?",
+      "Recommend lunch offers"
+    ];
+  } else if (isAskingForDishes) {
+    suggestions = [
+      "Show me vegetarian dishes",
+      "Find spicy food options",
+      "Recommend desserts",
+      "What's popular for breakfast?"
+    ];
+  } else {
+    suggestions = [
+      "Show me current offers",
+      "Recommend popular dishes",
+      "Find romantic restaurants",
+      "What's good for family dining?"
+    ];
+  }
+
+  return {
+    message,
+    suggestions: suggestions.slice(0, 3),
+    recommendations: recommendations.length > 0 ? recommendations : undefined,
+    dishes: dishes.length > 0 ? dishes : undefined,
+    offers: offers.length > 0 ? offers : undefined
+  };
+};
+
+// Get AI-powered search suggestions
+export const getSearchSuggestions = async (query: string): Promise<string[]> => {
+  try {
+    const prompt = `Given the search query "${query}", suggest 5 related food/restaurant search terms that would be helpful for someone looking for restaurants in Chennai.
+
+    Available restaurants and cuisines: ${chennaiRestaurants.map(r => `${r.name} (${r.cuisine.join(', ')})`).join(', ')}
+
+    Respond with exactly 5 suggestions as a JSON array of strings:
+    ["suggestion1", "suggestion2", "suggestion3", "suggestion4", "suggestion5"]`;
+
+    const completion = await groq.chat.completions.create({
+      messages: [{ role: 'user', content: prompt }],
+      model: 'llama3-8b-8192',
+      temperature: 0.6,
+      max_tokens: 200,
+    });
+
+    const response = completion.choices[0]?.message?.content;
+    if (!response) throw new Error('No response from Groq API');
+
+    return JSON.parse(response);
+  } catch (error) {
+    console.error('Error getting search suggestions:', error);
+    return [
+      `${query} restaurants in Chennai`,
+      `Best ${query} near me`,
+      `${query} delivery`,
+      `Authentic ${query}`,
+      `${query} with good ratings`
+    ];
+  }
+};
 
 // Get food recommendations based on user preferences
 export const getFoodRecommendations = async (
@@ -129,196 +435,6 @@ export const getFoodRecommendations = async (
         image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
         category: 'Biryani'
       }
-    ];
-  }
-};
-
-// Get restaurant recommendations based on user context
-export const getRestaurantRecommendations = async (
-  context: {
-    location?: string;
-    occasion?: string;
-    groupSize?: number;
-    budget?: number;
-    cuisine?: string;
-  }
-): Promise<RestaurantRecommendation[]> => {
-  try {
-    const prompt = `Recommend 4 restaurants in Chennai for the following context:
-    - Location preference: ${context.location || 'anywhere in Chennai'}
-    - Occasion: ${context.occasion || 'casual dining'}
-    - Group size: ${context.groupSize || 2} people
-    - Budget for two: ₹${context.budget || 1000}
-    - Cuisine preference: ${context.cuisine || 'any'}
-
-    Available restaurants:
-    ${chennaiRestaurants.map(r => `${r.name}: ${r.cuisine.join(', ')}, ₹${r.priceForTwo} for two, Rating: ${r.rating}, Location: ${r.address}`).join('\n')}
-
-    Respond with exactly 4 recommendations in this JSON format:
-    [
-      {
-        "restaurantName": "Restaurant Name",
-        "reason": "Why this restaurant is perfect for the context",
-        "specialDishes": ["dish1", "dish2", "dish3"]
-      }
-    ]`;
-
-    const completion = await groq.chat.completions.create({
-      messages: [{ role: 'user', content: prompt }],
-      model: 'llama3-8b-8192',
-      temperature: 0.7,
-      max_tokens: 1000,
-    });
-
-    const response = completion.choices[0]?.message?.content;
-    if (!response) throw new Error('No response from Groq API');
-
-    const recommendations = JSON.parse(response);
-    
-    return recommendations.map((rec: any) => {
-      const restaurant = chennaiRestaurants.find(r => 
-        r.name.toLowerCase().includes(rec.restaurantName.toLowerCase())
-      );
-
-      return {
-        id: restaurant?.id || '',
-        name: restaurant?.name || rec.restaurantName,
-        reason: rec.reason,
-        cuisine: restaurant?.cuisine || [],
-        rating: restaurant?.rating || 4.0,
-        priceForTwo: restaurant?.priceForTwo || 500,
-        image: restaurant?.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-        specialDishes: rec.specialDishes || []
-      };
-    });
-  } catch (error) {
-    console.error('Error getting restaurant recommendations:', error);
-    // Fallback recommendations
-    return chennaiRestaurants.slice(0, 4).map(restaurant => ({
-      id: restaurant.id,
-      name: restaurant.name,
-      reason: `Highly rated ${restaurant.cuisine.join(' & ')} restaurant with excellent reviews`,
-      cuisine: restaurant.cuisine,
-      rating: restaurant.rating,
-      priceForTwo: restaurant.priceForTwo,
-      image: restaurant.image,
-      specialDishes: restaurant.menu.slice(0, 3).map(m => m.name)
-    }));
-  }
-};
-
-// Generate personalized offers
-export const getPersonalizedOffers = async (
-  userProfile: {
-    favoriteRestaurants?: string[];
-    favoriteCuisines?: string[];
-    averageSpending?: number;
-    diningFrequency?: string;
-  }
-): Promise<OfferRecommendation[]> => {
-  try {
-    const prompt = `Generate 3 personalized restaurant offers for a user with these preferences:
-    - Favorite restaurants: ${userProfile.favoriteRestaurants?.join(', ') || 'none specified'}
-    - Favorite cuisines: ${userProfile.favoriteCuisines?.join(', ') || 'varied'}
-    - Average spending: ₹${userProfile.averageSpending || 500} per meal
-    - Dining frequency: ${userProfile.diningFrequency || 'weekly'}
-
-    Available restaurants: ${chennaiRestaurants.map(r => r.name).join(', ')}
-
-    Create attractive offers that would appeal to this user. Respond in this JSON format:
-    [
-      {
-        "title": "Offer Title",
-        "description": "Detailed offer description",
-        "discount": "20% OFF or Buy 1 Get 1 etc",
-        "restaurantName": "Restaurant Name",
-        "validUntil": "Date",
-        "terms": "Terms and conditions"
-      }
-    ]`;
-
-    const completion = await groq.chat.completions.create({
-      messages: [{ role: 'user', content: prompt }],
-      model: 'llama3-8b-8192',
-      temperature: 0.8,
-      max_tokens: 1000,
-    });
-
-    const response = completion.choices[0]?.message?.content;
-    if (!response) throw new Error('No response from Groq API');
-
-    const offers = JSON.parse(response);
-    
-    return offers.map((offer: any) => {
-      const restaurant = chennaiRestaurants.find(r => 
-        r.name.toLowerCase().includes(offer.restaurantName.toLowerCase())
-      );
-
-      return {
-        title: offer.title,
-        description: offer.description,
-        discount: offer.discount,
-        restaurantName: restaurant?.name || offer.restaurantName,
-        validUntil: offer.validUntil,
-        image: restaurant?.image || 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-        terms: offer.terms
-      };
-    });
-  } catch (error) {
-    console.error('Error getting personalized offers:', error);
-    // Fallback offers
-    return [
-      {
-        title: '20% OFF on South Indian Breakfast',
-        description: 'Start your day with authentic South Indian breakfast at unbeatable prices',
-        discount: '20% OFF',
-        restaurantName: 'Murugan Idli Shop',
-        validUntil: '2024-07-31',
-        image: 'https://images.unsplash.com/photo-1626132647523-66f5bf380027?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-        terms: 'Valid on orders above ₹200. Cannot be combined with other offers.'
-      },
-      {
-        title: 'Buy 1 Get 1 Biryani',
-        description: 'Double the joy with our signature biryani offer',
-        discount: 'Buy 1 Get 1',
-        restaurantName: 'Buhari Hotel',
-        validUntil: '2024-07-31',
-        image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-        terms: 'Valid on Chicken and Mutton Biryani. Dine-in only.'
-      }
-    ];
-  }
-};
-
-// Get AI-powered search suggestions
-export const getSearchSuggestions = async (query: string): Promise<string[]> => {
-  try {
-    const prompt = `Given the search query "${query}", suggest 5 related food/restaurant search terms that would be helpful for someone looking for restaurants in Chennai.
-
-    Available restaurants and cuisines: ${chennaiRestaurants.map(r => `${r.name} (${r.cuisine.join(', ')})`).join(', ')}
-
-    Respond with exactly 5 suggestions as a JSON array of strings:
-    ["suggestion1", "suggestion2", "suggestion3", "suggestion4", "suggestion5"]`;
-
-    const completion = await groq.chat.completions.create({
-      messages: [{ role: 'user', content: prompt }],
-      model: 'llama3-8b-8192',
-      temperature: 0.6,
-      max_tokens: 200,
-    });
-
-    const response = completion.choices[0]?.message?.content;
-    if (!response) throw new Error('No response from Groq API');
-
-    return JSON.parse(response);
-  } catch (error) {
-    console.error('Error getting search suggestions:', error);
-    return [
-      'South Indian breakfast',
-      'Biryani restaurants',
-      'Vegetarian thali',
-      'North Indian curry',
-      'Coffee and snacks'
     ];
   }
 };

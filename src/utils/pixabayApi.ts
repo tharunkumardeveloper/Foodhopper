@@ -1,10 +1,65 @@
-
-const PIXABAY_API_KEY = '51101534-5ea0626a1f88bac19855c0037';
+const PIXABAY_API_KEY = import.meta.env.VITE_PIXABAY_API_KEY || '51101534-5ea0626a1f88bac19855c0037';
+const UNSPLASH_ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
 const PIXABAY_BASE_URL = 'https://pixabay.com/api/';
+const UNSPLASH_BASE_URL = 'https://api.unsplash.com';
 
 // Cache to store fetched images and avoid duplicates
 const imageCache = new Map<string, string[]>();
 const usedImages = new Set<string>();
+
+// High-quality fallback images for different categories
+const fallbackImages = {
+  restaurant: [
+    "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+    "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80",
+    "https://images.unsplash.com/photo-1514933651103-005eec06c04b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80",
+    "https://images.unsplash.com/photo-1559329007-40df8a9345d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+    "https://images.unsplash.com/photo-1551218808-94e220e084d2?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+  ],
+  food: [
+    "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    "https://images.unsplash.com/photo-1626132647523-66f5bf380027?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+  ],
+  cuisine: [
+    "https://images.unsplash.com/photo-1574484284002-952d92456975?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    "https://images.unsplash.com/photo-1563379091339-03246963d51a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    "https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    "https://images.unsplash.com/photo-1565299507177-b0ac66763828?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+  ]
+};
+
+// Search Unsplash for high-quality images
+export const searchUnsplashImages = async (query: string, perPage: number = 12) => {
+  if (!UNSPLASH_ACCESS_KEY) {
+    console.warn('Unsplash API key not found, using fallbacks');
+    return [];
+  }
+
+  try {
+    const response = await fetch(
+      `${UNSPLASH_BASE_URL}/search/photos?query=${encodeURIComponent(query)}&per_page=${perPage}&orientation=landscape`,
+      {
+        headers: {
+          'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}`
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch from Unsplash');
+    }
+
+    const data = await response.json();
+    return data.results.map((photo: any) => photo.urls.regular);
+  } catch (error) {
+    console.error('Error fetching from Unsplash:', error);
+    return [];
+  }
+};
 
 export const searchPixabayImages = async (query: string, perPage: number = 12, page: number = 1) => {
   const cacheKey = `${query}-${perPage}-${page}`;
@@ -14,53 +69,63 @@ export const searchPixabayImages = async (query: string, perPage: number = 12, p
     return imageCache.get(cacheKey)!;
   }
 
-  try {
-    const response = await fetch(
-      `${PIXABAY_BASE_URL}?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=${perPage}&page=${page}&safesearch=true&min_width=1920&min_height=1080&order=popular&category=food,places,backgrounds`
-    );
+  let allImages: string[] = [];
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch images');
+  try {
+    // Try Unsplash first for higher quality images
+    const unsplashImages = await searchUnsplashImages(query, Math.min(perPage, 8));
+    allImages.push(...unsplashImages);
+
+    // If we need more images or Unsplash failed, try Pixabay
+    if (allImages.length < perPage) {
+      const remainingCount = perPage - allImages.length;
+      const response = await fetch(
+        `${PIXABAY_BASE_URL}?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=${remainingCount}&page=${page}&safesearch=true&min_width=800&min_height=600&order=popular&category=food,places,backgrounds`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const pixabayImages = data.hits.map((hit: any) => hit.largeImageURL || hit.webformatURL);
+        allImages.push(...pixabayImages);
+      }
     }
 
-    const data = await response.json();
-    const images = data.hits.map((hit: any) => hit.largeImageURL || hit.webformatURL);
-
     // Filter out already used images to ensure uniqueness
-    const uniqueImages = images.filter((img: string) => !usedImages.has(img));
+    const uniqueImages = allImages.filter((img: string) => !usedImages.has(img));
 
     // Add to used images set
-    uniqueImages.forEach((img: string) => usedImages.add(img));
+    uniqueImages.forEach(img => usedImages.add(img));
+
+    // If we still don't have enough images, add fallbacks
+    if (uniqueImages.length < perPage) {
+      const fallbackType = query.toLowerCase().includes('food') || query.toLowerCase().includes('dish') ? 'food' :
+        query.toLowerCase().includes('cuisine') ? 'cuisine' : 'restaurant';
+
+      const fallbacks = fallbackImages[fallbackType] || fallbackImages.restaurant;
+      const neededCount = perPage - uniqueImages.length;
+      const availableFallbacks = fallbacks.filter(img => !usedImages.has(img));
+
+      uniqueImages.push(...availableFallbacks.slice(0, neededCount));
+      availableFallbacks.slice(0, neededCount).forEach(img => usedImages.add(img));
+    }
 
     // Cache the results
     imageCache.set(cacheKey, uniqueImages);
-
     return uniqueImages;
+
   } catch (error) {
-    console.error('Error fetching Pixabay images:', error);
-    return getFallbackImages().slice(0, perPage);
+    console.error('Error fetching images:', error);
+
+    // Return fallback images on error
+    const fallbackType = query.toLowerCase().includes('food') || query.toLowerCase().includes('dish') ? 'food' :
+      query.toLowerCase().includes('cuisine') ? 'cuisine' : 'restaurant';
+
+    const fallbacks = fallbackImages[fallbackType] || fallbackImages.restaurant;
+    const result = fallbacks.slice(0, perPage);
+    imageCache.set(cacheKey, result);
+    return result;
   }
 };
-
-// Enhanced fallback high-quality images with more variety
-const getFallbackImages = () => [
-  'https://cdn.pixabay.com/photo/2017/08/03/13/30/people-2576336_1920.jpg',
-  'https://cdn.pixabay.com/photo/2014/09/17/20/26/restaurant-449952_1920.jpg',
-  'https://cdn.pixabay.com/photo/2016/03/05/19/02/hamburger-1238246_1920.jpg',
-  'https://cdn.pixabay.com/photo/2017/12/09/08/18/pizza-3007395_1920.jpg',
-  'https://cdn.pixabay.com/photo/2014/10/19/20/59/hamburger-494706_1920.jpg',
-  'https://cdn.pixabay.com/photo/2017/01/26/02/06/platter-2009590_1920.jpg',
-  'https://cdn.pixabay.com/photo/2016/11/18/14/39/beans-1834984_1920.jpg',
-  'https://cdn.pixabay.com/photo/2017/05/04/16/37/meeting-2280656_1920.jpg',
-  'https://cdn.pixabay.com/photo/2015/03/26/09/47/sky-690293_1920.jpg',
-  'https://cdn.pixabay.com/photo/2017/08/06/12/06/people-2591874_1920.jpg',
-  'https://cdn.pixabay.com/photo/2016/11/29/05/45/astronomy-1867616_1920.jpg',
-  'https://cdn.pixabay.com/photo/2017/09/16/19/21/salad-2756467_1920.jpg',
-  'https://cdn.pixabay.com/photo/2018/07/18/19/12/pasta-3547078_1920.jpg',
-  'https://cdn.pixabay.com/photo/2017/05/01/05/18/pastry-2274750_1920.jpg',
-  'https://cdn.pixabay.com/photo/2016/12/26/17/28/spaghetti-1932466_1920.jpg',
-  'https://cdn.pixabay.com/photo/2017/06/06/22/46/mediterranean-cuisine-2378758_1920.jpg'
-];
 
 // Enhanced dynamic image fetching with specific keywords and unique results
 export const fetchHeroImages = async () => {
@@ -230,6 +295,18 @@ export const clearImageCache = () => {
   usedImages.clear();
 };
 
+// Enhanced fallback high-quality images with more variety
+const getFallbackImages = () => [
+  'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+  'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80',
+  'https://images.unsplash.com/photo-1514933651103-005eec06c04b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80',
+  'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+  'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+  'https://images.unsplash.com/photo-1626132647523-66f5bf380027?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+  'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+  'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+];
+
 // Static getter functions that return dynamic results
 export const getHeroImages = () => getFallbackImages();
 export const getRestaurantImages = () => getFallbackImages();
@@ -239,3 +316,70 @@ export const getCityImages = () => getFallbackImages();
 export const getDiningImages = () => getFallbackImages();
 export const getUserAvatars = () => getFallbackImages();
 export const getAmbientImages = () => getFallbackImages();
+
+// Specific dish image mapping for better accuracy
+export const getDishImage = (dishName: string, category: string = '') => {
+  const dishImages: { [key: string]: string } = {
+    // South Indian dishes
+    'idli': 'https://images.unsplash.com/photo-1626132647523-66f5bf380027?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'masala dosa': 'https://images.unsplash.com/photo-1630383249896-424e482df921?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'dosa': 'https://images.unsplash.com/photo-1630383249896-424e482df921?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'vada': 'https://images.unsplash.com/photo-1574484284002-952d92456975?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'upma': 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'pongal': 'https://images.unsplash.com/photo-1563379091339-03246963d51a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'sambar': 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'rasam': 'https://images.unsplash.com/photo-1574484284002-952d92456975?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'curd rice': 'https://images.unsplash.com/photo-1626132647523-66f5bf380027?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    
+    // Biryani dishes
+    'chicken biryani': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'mutton biryani': 'https://images.unsplash.com/photo-1563379091339-03246963d51a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'egg biryani': 'https://images.unsplash.com/photo-1574484284002-952d92456975?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'hyderabadi biryani': 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'lucknowi biryani': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    
+    // North Indian dishes
+    'dal makhani': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'butter chicken': 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'paneer butter masala': 'https://images.unsplash.com/photo-1563379091339-03246963d51a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'tandoori chicken': 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    
+    // Beverages
+    'filter coffee': 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'lassi': 'https://images.unsplash.com/photo-1574484284002-952d92456975?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'kahwa': 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    
+    // Desserts
+    'rasgulla': 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'kulfi': 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    'payasam': 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+  };
+
+  const dishKey = dishName.toLowerCase();
+  
+  // Try exact match first
+  if (dishImages[dishKey]) {
+    return dishImages[dishKey];
+  }
+  
+  // Try partial matches
+  for (const [key, image] of Object.entries(dishImages)) {
+    if (dishKey.includes(key) || key.includes(dishKey)) {
+      return image;
+    }
+  }
+  
+  // Category-based fallbacks
+  if (category.toLowerCase().includes('biryani')) {
+    return dishImages['chicken biryani'];
+  }
+  if (category.toLowerCase().includes('dessert')) {
+    return dishImages['rasgulla'];
+  }
+  if (category.toLowerCase().includes('beverage')) {
+    return dishImages['filter coffee'];
+  }
+  
+  // Default fallback
+  return 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
+};

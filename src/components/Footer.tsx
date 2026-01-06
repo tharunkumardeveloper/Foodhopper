@@ -57,8 +57,8 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/city/Chennai" className="text-gray-400 hover:text-orange-400 transition-colors">
-                  Restaurants in Chennai
+                <Link to="/search" className="text-gray-400 hover:text-orange-400 transition-colors">
+                  Find Restaurants
                 </Link>
               </li>
             </ul>
