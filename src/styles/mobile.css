@@ -1,0 +1,177 @@
+/* Mobile-specific optimizations */
+
+/* Ensure proper touch targets */
+@media (max-width: 768px) {
+  /* Minimum touch target size */
+  button, 
+  .btn, 
+  [role="button"],
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Improve text readability on mobile */
+  body {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+
+  /* Better scrolling on iOS */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Prevent zoom on input focus */
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="password"],
+  input[type="search"],
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  /* Optimize card layouts for mobile */
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Better spacing for mobile */
+  .mobile-spacing {
+    padding: 1rem;
+  }
+
+  /* Hide elements that are too small on mobile */
+  .hide-mobile {
+    display: none;
+  }
+
+  /* Show mobile-only elements */
+  .show-mobile {
+    display: block;
+  }
+
+  /* Optimize modal/dialog for mobile */
+  .modal-mobile {
+    margin: 0;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  /* Better tab navigation on mobile */
+  .tabs-mobile {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .tabs-mobile::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Optimize form layouts */
+  .form-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Better image handling */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Optimize table for mobile */
+  .table-mobile {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* Better sticky elements */
+  .sticky-mobile {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+}
+
+/* Landscape mobile optimizations */
+@media (max-width: 768px) and (orientation: landscape) {
+  /* Reduce header height in landscape */
+  .hero-mobile {
+    min-height: 60vh;
+  }
+
+  /* Optimize navigation for landscape */
+  .nav-mobile {
+    height: 3rem;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  /* Even smaller spacing */
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  /* Smaller text on very small screens */
+  .text-responsive {
+    font-size: 0.875rem;
+  }
+
+  /* Stack elements vertically */
+  .stack-mobile {
+    flex-direction: column;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Optimize images for retina displays */
+  .retina-image {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Dark mode mobile optimizations */
+@media (prefers-color-scheme: dark) and (max-width: 768px) {
+  /* Better contrast for mobile dark mode */
+  .dark-mobile {
+    background-color: #111827;
+    color: #f9fafb;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print optimizations */
+@media print {
+  /* Hide interactive elements when printing */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Optimize layout for printing */
+  .print-optimize {
+    background: white !important;
+    color: black !important;
+  }
+}

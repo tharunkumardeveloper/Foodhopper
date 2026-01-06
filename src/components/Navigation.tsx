@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, MapPin, Search, User, Home, Utensils, Phone, HelpCircle } from "lucide-react";
+import { Menu, X, MapPin, Search, User, Home, Utensils, Phone, HelpCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Navigation = () => {
@@ -10,12 +10,11 @@ const Navigation = () => {
 
   const navItems = [
     { name: "Home", path: "/", icon: Home },
-    { name: "Restaurants Nearby", path: "/search?nearby=true", icon: MapPin },
-    { name: "Dine Types", path: "/dining-types", icon: Utensils },
+    { name: "Nearby", path: "/search?nearby=true", icon: MapPin },
+    { name: "Features", path: "/features", icon: Sparkles },
     { name: "Search", path: "/search", icon: Search },
-    { name: "Owner Login", path: "/owner-login", icon: User },
-    { name: "User Dashboard", path: "/dashboard", icon: User },
-    { name: "Contact Us", path: "/contact", icon: Phone },
+    { name: "Dashboard", path: "/dashboard", icon: User },
+    { name: "Contact", path: "/contact", icon: Phone },
     { name: "Help", path: "/help", icon: HelpCircle }
   ];
 

@@ -16,7 +16,11 @@ import {
   ExternalLink,
   TrendingUp,
   Award,
-  BookOpen
+  BookOpen,
+  Zap,
+  Shield,
+  Bell,
+  Brain
 } from "lucide-react";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
@@ -28,6 +32,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { fetchRestaurantImages, fetchFoodImages, fetchUserAvatars } from "../utils/pixabayApi";
+import SmartReorder from "../components/SmartReorder";
+import LoyaltyPassport from "../components/LoyaltyPassport";
+import DietPreferencesEngine from "../components/DietPreferences";
+import TableAlertsComponent from "../components/TableAlerts";
 
 const UserDashboard = () => {
   const [activeTab, setActiveTab] = useState("bookings");
@@ -252,22 +260,44 @@ const UserDashboard = () => {
 
           {/* Dashboard Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="bookings" className="flex items-center">
-                <Calendar className="h-4 w-4 mr-2" />
-                My Bookings
+            <TabsList className="grid w-full grid-cols-3 md:grid-cols-7 gap-1">
+              <TabsTrigger value="bookings" className="flex items-center text-xs md:text-sm">
+                <Calendar className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                <span className="hidden sm:inline">Bookings</span>
+                <span className="sm:hidden">Book</span>
               </TabsTrigger>
-              <TabsTrigger value="saved" className="flex items-center">
-                <Heart className="h-4 w-4 mr-2" />
-                Saved
+              <TabsTrigger value="saved" className="flex items-center text-xs md:text-sm">
+                <Heart className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                <span className="hidden sm:inline">Saved</span>
+                <span className="sm:hidden">Save</span>
               </TabsTrigger>
-              <TabsTrigger value="reviews" className="flex items-center">
-                <Star className="h-4 w-4 mr-2" />
-                Reviews
+              <TabsTrigger value="reviews" className="flex items-center text-xs md:text-sm">
+                <Star className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                <span className="hidden sm:inline">Reviews</span>
+                <span className="sm:hidden">Rev</span>
               </TabsTrigger>
-              <TabsTrigger value="profile" className="flex items-center">
-                <User className="h-4 w-4 mr-2" />
-                Profile
+              <TabsTrigger value="reorder" className="flex items-center text-xs md:text-sm md:col-span-1">
+                <Zap className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                <span className="hidden md:inline">Quick Reorder</span>
+                <span className="md:hidden hidden sm:inline">Reorder</span>
+                <span className="sm:hidden">Re</span>
+              </TabsTrigger>
+              <TabsTrigger value="loyalty" className="flex items-center text-xs md:text-sm md:col-span-1">
+                <Award className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                <span className="hidden md:inline">Loyalty</span>
+                <span className="md:hidden hidden sm:inline">Points</span>
+                <span className="sm:hidden">Pts</span>
+              </TabsTrigger>
+              <TabsTrigger value="diet" className="flex items-center text-xs md:text-sm md:col-span-1">
+                <Shield className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                <span className="hidden md:inline">Diet Prefs</span>
+                <span className="md:hidden hidden sm:inline">Diet</span>
+                <span className="sm:hidden">D</span>
+              </TabsTrigger>
+              <TabsTrigger value="profile" className="flex items-center text-xs md:text-sm md:col-span-1">
+                <User className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                <span className="hidden sm:inline">Profile</span>
+                <span className="sm:hidden">Me</span>
               </TabsTrigger>
             </TabsList>
 
@@ -470,6 +500,22 @@ const UserDashboard = () => {
                 </CardContent>
               </Card>
             </TabsContent>
+
+            {/* Smart Reorder Tab */}
+            <TabsContent value="reorder" className="space-y-6">
+              <SmartReorder />
+            </TabsContent>
+
+            {/* Loyalty Passport Tab */}
+            <TabsContent value="loyalty" className="space-y-6">
+              <LoyaltyPassport />
+            </TabsContent>
+
+            {/* Diet Preferences Tab */}
+            <TabsContent value="diet" className="space-y-6">
+              <DietPreferencesEngine />
+            </TabsContent>
+
           </Tabs>
         </div>
       </div>

@@ -9,6 +9,7 @@ import DiningTypes from "./pages/DiningTypes";
 import Search from "./pages/Search";
 import Contact from "./pages/Contact";
 import Help from "./pages/Help";
+import Features from "./pages/Features";
 import NotFound from "./pages/NotFound";
 import RestaurantDetail from "./pages/RestaurantDetail";
 import CityPage from "./pages/CityPage";
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/search" element={<Search />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/help" element={<Help />} />
+          <Route path="/features" element={<Features />} />
           <Route path="/owner-login" element={<OwnerDashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/owner-dashboard" element={<OwnerDashboard />} />
